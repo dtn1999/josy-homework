@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Media hub</title>
+</head>
+<body>
+<h1>Media hub</h1>
+<p>Upload your media files here</p>
+<form action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file"/>
+    <input type="submit" value="Upload"/>
+</form>
+<h2>Files</h2>
+<!--<ul>-->
+<!--    <li th:each="file : ${files}">-->
+<!--        <a th:href="@{/files/{filename}(filename=${file.filename})}" th:text="${file.filename}"></a>-->
+<!--    </li>-->
+<!--</ul>-->
+</body>
+</html>
