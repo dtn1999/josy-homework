@@ -6,6 +6,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.security.Principal;
+import java.util.Optional;
+
 @Controller
 @RequiredArgsConstructor
 public class MediaHubController {
@@ -13,12 +16,19 @@ public class MediaHubController {
 
     @GetMapping("/register")
     public String register() {
-        return "register.html";
+        return "auth/register.html";
+    }
+
+    @GetMapping("/login")
+    public String login() {
+        return "auth/login.html";
     }
 
     @GetMapping("/")
-    public String index() {
-        return "index";
+    public String index(Principal principal) {
+        return Optional.ofNullable(principal)
+                .map(p -> "index.html")
+                .orElse("auth/login.html");
     }
 
 }

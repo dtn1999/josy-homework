@@ -4,6 +4,7 @@ import com.project.mediahub.repository.UserRepository;
 import com.project.mediahub.service.AuthenticationService;
 import com.project.mediahub.service.UserService;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -14,7 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableJpaRepositories
+@EnableJpaRepositories(
+        basePackages = "com.project.mediahub.repository"
+)
 public class ApplicationConfiguration {
 
     @Bean
@@ -22,7 +25,7 @@ public class ApplicationConfiguration {
         return httpSecurity
                 .authorizeHttpRequests(request ->
                         request
-                                .requestMatchers("/login", "/register")
+                                .requestMatchers(PathRequest.toStaticResources().atCommonLocations())
                                 .permitAll()
                                 .anyRequest().authenticated()
                 )

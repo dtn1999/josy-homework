@@ -1,22 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Media hub</title>
-    <link rel="stylesheet" href="output.css">
-</head>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org" lang="en">
+<div th:replace="~{/fragments/head}">
+    <!--    dummy placeholder -->
+</div>
 <body>
-<h1 class="text-amber-600">Media hub</h1>
-<p class="font-bold">Upload your media files here</p>
-<form action="/upload" method="post" enctype="multipart/form-data">
-    <input type="file" name="file"/>
-    <input type="submit" value="Upload"/>
-</form>
-<h2>Files</h2>
-<!--<ul>-->
-<!--    <li th:each="file : ${files}">-->
-<!--        <a th:href="@{/files/{filename}(filename=${file.filename})}" th:text="${file.filename}"></a>-->
-<!--    </li>-->
-<!--</ul>-->
+
 </body>
 </html>

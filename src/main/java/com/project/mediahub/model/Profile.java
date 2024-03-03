@@ -18,8 +18,12 @@ import java.util.Collections;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Profile extends BaseEntity implements UserDetails {
-    @Column(name = "username", unique = true, nullable = false)
-    private String username;
+    @Column(name = "last_name", nullable = false)
+    private String firstName;
+    @Column(name = "first_name", nullable = false)
+    private String lastName;
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
     @Column(name = "password", nullable = false, columnDefinition = "TEXT")
     private String password;
     @Column(name = "enabled", nullable = false)
@@ -27,7 +31,13 @@ public class Profile extends BaseEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        // whe don't have roles so we don't need to implement this method
         return Collections.emptyList();
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
     }
 
     @Override
