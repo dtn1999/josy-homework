@@ -1,5 +1,7 @@
 package com.project.mediahub.service;
 
+import com.project.mediahub.model.Profile;
+import com.project.mediahub.model.RegistrationRequest;
 import com.project.mediahub.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class UserService implements UserDetailsPasswordService, UserDetailsService {
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    private final UserRepository profileRepository;
 
 
     @Override
@@ -24,4 +26,16 @@ public class UserService implements UserDetailsPasswordService, UserDetailsServi
         return null;
     }
 
+    public Profile register(final RegistrationRequest request) {
+        return this.profileRepository.save(Profile.builder()
+                        .firstName(request.getFirstName())
+                        .lastName(request.getLastName())
+                        .email(request.getEmail())
+                        .password(passwordEncoder.encode(request.getPassword()))
+                        .enabled(true)
+                .build()
+        );
+    }
+
 }
+
