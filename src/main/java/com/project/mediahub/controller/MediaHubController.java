@@ -2,9 +2,12 @@ package com.project.mediahub.controller;
 
 import com.project.mediahub.model.RegistrationRequest;
 import com.project.mediahub.service.AuthenticationService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.security.Principal;
 import java.util.Optional;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class MediaHubController {
@@ -19,29 +23,28 @@ public class MediaHubController {
 
     @GetMapping("/auth/register")
     public String register(Model model) {
-        model.addAttribute("registration", new RegistrationRequest());
-        return "auth/register.html";
+        model.addAttribute("registrationInfo", new RegistrationRequest());
+        return "auth/register";
     }
 
     @PostMapping("/auth/register")
-    public String register(@ModelAttribute("registration") RegistrationRequest request) {
-        authenticationService.register(request);
-        return "redirect:/auth//register?success";
+    public String register(
+            @Valid @ModelAttribute("registration") RegistrationRequest request,
+            BindingResult bindingResult) {
+        log.info("Registering user with the following information: {}", request);
+        return "index";
     }
 
     @GetMapping("/login")
     public String login() {
-        return "auth/login.html";
+        return "auth/login";
     }
 
     @GetMapping("/")
     public String index(Principal principal) {
         return Optional.ofNullable(principal)
-                .map(p -> "index.html")
-                .orElse("auth/login.html");
+                .map(p -> "index")
+                .orElse("auth/login");
     }
-
-
-
 
 }

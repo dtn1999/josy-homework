@@ -5,23 +5,32 @@
 </div>
 <body>
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-    <form th:action="@{/login.html}" method="post">
+    <form th:action="@{/auth/register}" method="post" th:object="${registrationInfo}">
         <div>
-            <label for="firstname">First Name</label>:
-            <input type="text" id="firstname" name="firstname" autofocus="autofocus"/> <br/>
+            <label for="firstname">First Name</label>
+            <input type="text" id="firstname" name="firstname" autofocus="autofocus" th:field="*{firstName}"/>
+            <span th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"> First Name Invalid</span>
         </div>
         <div>
-            <label for="lastname">Last Name</label>:
-            <input type="text" id="lastname" name="lastname" autofocus="autofocus"/> <br/>
+            <label for="lastname">Last Name</label>
+            <input type="text" id="lastname" name="lastname"  th:field="*{lastName}"/>
+            <span th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"> Last Name Invalid</span>
         </div>
         <div>
-            <label for="email">Email</label>:
-            <input type="email" id="email" name="email" autofocus="autofocus"/> <br/>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email"  th:field="*{email}"/>
+            <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}"> Email Invalid</span>
         </div>
         <div>
             <div>
-                <label for="password">Password</label>:
-                <input type="password" id="password" name="password" autofocus="autofocus"/> <br/>
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password"  th:field="*{password}"/>
+                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}"> Password Invalid</span>
+            </div>
+            <div>
+                <label for="passwordConfirmation">Confirm Password</label>
+                <input type="password" id="passwordConfirmation" name="passwordConfirmation"  th:field="*{password}"/>
+                <span th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">Password in not the same</span>
             </div>
             <a href="/auth/password-forgot">Password forgot ?</a>
         </div>
