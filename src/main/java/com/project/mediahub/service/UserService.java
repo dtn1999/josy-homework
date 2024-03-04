@@ -1,6 +1,6 @@
 package com.project.mediahub.service;
 
-import com.project.mediahub.model.Profile;
+import com.project.mediahub.model.User;
 import com.project.mediahub.model.RegistrationRequest;
 import com.project.mediahub.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +26,8 @@ public class UserService implements UserDetailsPasswordService, UserDetailsServi
         return null;
     }
 
-    public Profile register(final RegistrationRequest request) {
-        return this.profileRepository.save(Profile.builder()
+    public User register(final RegistrationRequest request) {
+        return this.profileRepository.save(User.builder()
                         .firstName(request.getFirstName())
                         .lastName(request.getLastName())
                         .email(request.getEmail())

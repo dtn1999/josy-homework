@@ -2,6 +2,7 @@ package com.project.mediahub.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,7 +18,8 @@ import java.util.Collections;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Profile extends BaseEntity implements UserDetails {
+@Table(name = "app_user")
+public class User extends BaseEntity implements UserDetails {
     @Column(name = "last_name", nullable = false)
     private String firstName;
     @Column(name = "first_name", nullable = false)

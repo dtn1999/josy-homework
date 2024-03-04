@@ -1,5 +1,6 @@
 package com.project.mediahub.service;
 
+import com.project.mediahub.model.User;
 import com.project.mediahub.model.RegistrationRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -7,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 public class AuthenticationService {
     private final UserService userService;
 
-    public void register(final RegistrationRequest request) {
-
+    public User register(final RegistrationRequest request) {
+        return this.userService.register(request);
     }
 
     public void login(final String username, final String password) {
