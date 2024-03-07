@@ -29,9 +29,16 @@ public class MediaHubController {
 
     @PostMapping("/auth/register")
     public String register(
-            @Valid @ModelAttribute("registration") RegistrationRequest request,
-            BindingResult bindingResult) {
+            @Valid RegistrationRequest request,
+            BindingResult bindingResult,
+            Model model) {
         log.info("Registering user with the following information: {}", request);
+        model.addAttribute("registrationInfo", request);
+        if (bindingResult.hasErrors()) {
+            log.error("Registration request has errors: {}", bindingResult.getAllErrors());
+            return "auth/register";
+        }
+
         return "index";
     }
 
