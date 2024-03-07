@@ -1,0 +1,5 @@
+2024-03-08 00:08:32.893189+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Table "APP_USER" not found (this database is empty); SQL statement:
+insert into app_user (created_at,email,enabled,last_name,first_name,password,updated_at,id) values (?,?,?,?,?,?,?,default) [42104-224]
+2024-03-08 00:10:27.859197+01:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLNonTransientException: The object is already closed [90007-224]

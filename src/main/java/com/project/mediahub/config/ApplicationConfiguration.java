@@ -7,7 +7,9 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -62,8 +64,18 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public AuthenticationService authenticationService(final UserService userService) {
-        return new AuthenticationService(userService);
+    public AuthenticationService authenticationService(
+            final UserService userService,
+            DaoAuthenticationProvider authenticationProvider) {
+        return new AuthenticationService(userService, authenticationProvider);
+    }
+
+    @Bean
+    public AuthenticationManagerBuilder authenticationManagerBuilder(
+            AuthenticationManagerBuilder auth,
+            DaoAuthenticationProvider provider) {
+        auth.authenticationProvider(provider);
+        return auth;
     }
 
     @Bean

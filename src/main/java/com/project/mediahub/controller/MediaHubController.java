@@ -1,5 +1,6 @@
 package com.project.mediahub.controller;
 
+import com.project.mediahub.model.ApiResponse;
 import com.project.mediahub.model.RegistrationRequest;
 import com.project.mediahub.service.AuthenticationService;
 import jakarta.validation.Valid;
@@ -37,7 +38,8 @@ public class MediaHubController {
             log.error("Registration request has errors: {}", bindingResult.getAllErrors());
             return "auth/register";
         }
-
+        ApiResponse registrationResponse = authenticationService.register(request);
+        model.addAttribute("response", registrationResponse);
         return "index";
     }
 
