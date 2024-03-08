@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -21,12 +22,13 @@ public class Note extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     private Upload upload;
 
-    @ManyToMany
     @JoinTable(
             name = "notice_tags",
             joinColumns = @JoinColumn(name = "notice_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")
     )
+    @Builder.Default
     @ToString.Exclude
-    private Set<Tag> tags;
+    @ManyToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    private Set<Tag> tags = new HashSet<>();
 }

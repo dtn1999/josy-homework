@@ -3,16 +3,14 @@ package com.project.mediahub.model.payload;
 import com.project.mediahub.model.entity.Note;
 import com.project.mediahub.model.entity.Tag;
 import com.project.mediahub.model.entity.Upload;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class NoteResponse {
@@ -24,7 +22,7 @@ public class NoteResponse {
     private String imageUrl;
 
 
-    public NoteResponse from(Note note) {
+    public static NoteResponse from(Note note) {
         return NoteResponse.builder()
                 .id(note.getId())
                 .title(note.getTitle())

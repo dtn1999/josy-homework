@@ -2,10 +2,12 @@ package com.project.mediahub.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Getter
@@ -19,8 +21,9 @@ public class Tag extends BaseEntity {
     @Column(name = "label", nullable = false)
     private String label;
 
-    @ManyToMany
+    @Builder.Default
     @ToString.Exclude
-    private Set<Note> notes;
+    @ManyToMany(mappedBy = "tags", fetch = FetchType.EAGER)
+    private Set<Note> notes = new HashSet<>();
 
 }

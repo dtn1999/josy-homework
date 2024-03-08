@@ -29,7 +29,8 @@ public class UploadUtils {
 
 
     public String extractFileExtension(String fileName) {
-        return fileName.substring(fileName.lastIndexOf("."));
+        // exclude the dot
+        return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
 }

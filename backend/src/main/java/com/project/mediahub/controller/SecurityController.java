@@ -26,6 +26,7 @@ public class SecurityController {
     public ResponseEntity<ApiResponse> register(@RequestBody @Valid RegistrationRequest request) {
         log.info("Registering user with the following information: {}", request);
         ApiResponse registrationResponse = authenticationService.register(request);
+        log.info("User registered successfully");
         return ResponseEntity.ok(registrationResponse);
     }
 

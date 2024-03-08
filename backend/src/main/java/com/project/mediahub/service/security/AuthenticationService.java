@@ -24,18 +24,8 @@ public class AuthenticationService {
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
         try {
             this.authenticationProvider.authenticate(token);
-            String accessToken = JwtTokenUtil.generateToken(request.getEmail());
-
-            AuthResponse authResponse = AuthResponse.builder()
-                    .accessToken(accessToken)
-                    .build();
-
-            return ApiResponse.builder()
-                    .message("User registered successfully")
-                    .success(true)
-                    .data(authResponse)
-                    .build();
-
+            AuthResponse accessToken = generateAuthResponse(request.getEmail());
+            return ApiResponse.success("User registered successfully", accessToken);
         } catch (Exception e) {
             return ApiResponse.builder()
                     .message(e.getMessage())
@@ -78,6 +68,7 @@ public class AuthenticationService {
         String accessToken = JwtTokenUtil.generateToken(username);
         return AuthResponse.builder()
                 .accessToken(accessToken)
+                .username(username)
                 .build();
     }
 
