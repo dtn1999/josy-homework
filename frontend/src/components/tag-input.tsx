@@ -32,6 +32,7 @@ export function TagInput({ tags, setTags, placeholder, label }: Props) {
       <div>
         <input
           type="text"
+          id="tag"
           value={tag}
           placeholder={placeholder}
           onChange={(e) => {

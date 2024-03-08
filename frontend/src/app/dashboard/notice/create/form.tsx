@@ -3,7 +3,7 @@ import Image from "next/image";
 import React from "react";
 import { FaSave } from "react-icons/fa";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { TagInput } from "@/components/tag-input";
 
@@ -17,7 +17,7 @@ const ACCEPTED_IMAGE_MIME_TYPES = [
 ];
 
 const schema = z.object({
-  title: z.string().email("title required"),
+  title: z.string().min(5, "title required"),
   content: z.string().min(1, "content required"),
   image: z
     .any()
@@ -30,13 +30,14 @@ const schema = z.object({
     ),
 });
 
-export type LoginFormValues = z.infer<typeof schema>;
+export type CreateNoticeFormValues = z.infer<typeof schema>;
 
 export function CreateNoticeForm() {
   const {
     register,
     handleSubmit,
     formState: { errors, dirtyFields },
+    watch,
   } = useForm({
     resolver: zodResolver(schema),
   });
@@ -44,9 +45,23 @@ export function CreateNoticeForm() {
   const [tags, setTags] = React.useState<string[]>([]);
   const [image, setImage] = React.useState<File | null>(null);
 
+  const createNotice = async (data: CreateNoticeFormValues) => {
+    console.log(
+      "create notice",
+      "title",
+      data.title,
+      "content",
+      data.content,
+      "tags",
+      tags,
+      "image",
+      image
+    );
+  };
+  watch();
   return (
     <form
-      onSubmit={handleSubmit((data) => console.log("submitted data", data))}
+      onSubmit={handleSubmit(createNotice as SubmitHandler<FieldValues>)}
       className="h-fit min-w-[400px] space-y-6 py-5"
     >
       <h1 className="text-3xl text-left">Create New Notice</h1>
@@ -56,7 +71,7 @@ export function CreateNoticeForm() {
           type="text"
           id="title"
           className="border border-black text-black px-0 py-1"
-          {...register("email")}
+          {...register("title")}
         />
         {dirtyFields?.title && errors?.title && (
           <p className="py-1 text-red-500 font-light">{`${errors.title?.message}`}</p>
@@ -95,28 +110,27 @@ export function CreateNoticeForm() {
           }}
         />
         {dirtyFields?.image && errors?.image && (
-          <p className="py-1 text-red-500 font-light">{`${errors.content?.message}`}</p>
+          <p className="py-1 text-red-500 font-light">{`${errors.image?.message}`}</p>
         )}
-        {image && (
+        {
           <div className="w-[400px] h-[400px] relative">
             <Image
-              src={URL.createObjectURL(image)}
-              layout="fill"
+              src="http://localhost:8080/api/notes/files/32b4253d-012e-4a27-b9e7-eb14679e7c55.jpg"
+              className="rounded-md absolute inset-0 w-full h-full size-cover"
               alt="image preview"
-              objectFit="cover"
+              width={400}
+              height={400}
             />
           </div>
-        )}
+        }
       </div>
-      <div className="flex justify-between items-center">
-        <button
-          type="submit"
-          className="px-3 py-2 rounded bg-green-500 text-white flex items-center space-x-1"
-        >
-          <FaSave />
-          <span className="">Create Notice</span>
-        </button>
-      </div>
+      <button
+        type="submit"
+        className="px-3 py-2 rounded bg-green-500 text-white flex items-center space-x-1"
+      >
+        <FaSave />
+        <span className="">Create Notice</span>
+      </button>
     </form>
   );
 }

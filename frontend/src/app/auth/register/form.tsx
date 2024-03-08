@@ -1,8 +1,11 @@
 "use client";
+import React from "react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, useForm } from "react-hook-form";
 import { z } from "zod";
+import { ApiResponse, registerUser } from "@/utils/lib";
+import { useRouter } from "next/navigation";
 
 const schema = z
   .object({
@@ -22,9 +25,11 @@ const schema = z
     }
   });
 
-type RegistrationFormValues = z.infer<typeof schema>;
+export type RegistrationFormValues = z.infer<typeof schema>;
 
 export function RegistrationForm() {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -33,7 +38,25 @@ export function RegistrationForm() {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data: FieldValues) => console.log(data);
+  const [error, setError] = React.useState<string | null>(null);
+  const [success, setSuccess] = React.useState<string | null>(null);
+
+  const onSubmit = async (data: FieldValues) => {
+    console.log(data);
+    const response = (await registerUser(
+      data as RegistrationFormValues
+    )) as ApiResponse;
+    if (response.success === false) {
+      setError(response.message);
+      setSuccess(null);
+      return;
+    }
+    setSuccess(response.message);
+    setError(null);
+    setTimeout(() => {
+      router.push("/dashboard");
+    }, 10);
+  };
 
   return (
     <form
@@ -42,6 +65,16 @@ export function RegistrationForm() {
       )}
       className="border h-fit p-5 min-w-[400px] space-y-6"
     >
+      {error && (
+        <span className="py-2 px-3 flex justify-center items-center bg-red-500">
+          {error}
+        </span>
+      )}
+      {success && (
+        <span className="py-2 px-3 flex justify-center items-center bg-green-500">
+          {success}
+        </span>
+      )}
       <h1 className="text-3xl text-center">Create an account</h1>
       <div className="flex flex-col">
         <label htmlFor="firstname">First Name</label>

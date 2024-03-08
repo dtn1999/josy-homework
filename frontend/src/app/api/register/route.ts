@@ -1,15 +1,13 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextResponse, NextRequest } from "next/server";
 
 type ResponseData = {
   message: string;
   success?: boolean;
 };
 
-export default function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ResponseData>
-) {
-  const { email, password } = req.body;
-  console.log("register", "email", email, "password", password);
-  res.status(200).json({ message: "Hello from Next.js!" });
+export async function POST(req: NextRequest) {
+  // Do whatever you want
+  const body = await req.json();
+  console.log("login", "email", body.email, "password", body.password);
+  return NextResponse.json({ message: "Hello World" }, { status: 200 });
 }

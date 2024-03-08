@@ -1,10 +1,26 @@
 "use client";
+import React from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { FaUserCog } from "react-icons/fa";
+import { getAuthenticatedUser } from "@/utils/lib";
+import { set } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 export default function ProfileMenu() {
+  const [username, setUsername] = React.useState<string>("");
+  const router = useRouter();
+
+  React.useEffect(() => {
+    const session = getAuthenticatedUser();
+    if (session.username) {
+      setUsername(session.username);
+      return;
+    }
+    router.push("/auth/login");
+  }, []);
+
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -13,7 +29,7 @@ export default function ProfileMenu() {
             className="-mr-1 ml-2 h-5 w-5 text-violet-200 hover:text-violet-100"
             aria-hidden="true"
           />
-          <span className="px-2">Danyls</span>
+          <span className="px-2">{username}</span>
           <FaChevronDown
             className="-mr-1 ml-2 h-5 w-5 text-violet-200 hover:text-violet-100"
             aria-hidden="true"
