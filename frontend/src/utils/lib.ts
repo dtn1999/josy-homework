@@ -26,7 +26,9 @@ type BackendResponse = {
   success: boolean;
 };
 
-export async function registerUser(details: RegistrationFormValues) {
+export async function registerUser(
+  details: RegistrationFormValues
+): Promise<ApiResponse> {
   try {
     const {
       data: { data, message },
@@ -50,7 +52,10 @@ export async function registerUser(details: RegistrationFormValues) {
   }
 }
 
-export async function login(email: string, password: string) {
+export async function login(
+  email: string,
+  password: string
+): Promise<ApiResponse> {
   try {
     const {
       data: { data, message },
@@ -72,7 +77,7 @@ export async function login(email: string, password: string) {
   }
 }
 
-export function logout() {
+export async function logout() {
   const { token } = getAuthenticatedUser();
   try {
     backendApi.post("/auth/logout", null, {

@@ -4,8 +4,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { FaUserCog } from "react-icons/fa";
-import { getAuthenticatedUser } from "@/utils/lib";
-import { set } from "react-hook-form";
+import { getAuthenticatedUser, logout } from "@/utils/lib";
 import { useRouter } from "next/navigation";
 
 export default function ProfileMenu() {
@@ -50,6 +49,10 @@ export default function ProfileMenu() {
             <Menu.Item>
               {({ active }) => (
                 <button
+                  onClick={async () => {
+                    await logout();
+                    router.push("/auth/login");
+                  }}
                   className={`${
                     active ? "bg-violet-500 text-white" : "text-gray-900"
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}

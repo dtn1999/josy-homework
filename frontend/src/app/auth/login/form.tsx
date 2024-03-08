@@ -1,8 +1,11 @@
 "use client";
+import React from "react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, set, useForm } from "react-hook-form";
 import { z } from "zod";
+import { login } from "@/utils/lib";
+import { useRouter } from "next/navigation";
 
 const schema = z.object({
   email: z.string().email("Invalid email address"),
@@ -12,6 +15,7 @@ const schema = z.object({
 export type LoginFormValues = z.infer<typeof schema>;
 
 export function LoginForm() {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -20,24 +24,39 @@ export function LoginForm() {
     resolver: zodResolver(schema),
   });
 
-  const login = async (data: LoginFormValues) => {
-    console.log("login", "email", data.email, "password", data.password);
-    const response = await fetch("/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
-    const responseData = await response.json();
-    console.log("response", responseData);
+  const [error, setError] = React.useState<string>("");
+  const [success, setSuccess] = React.useState<string>("");
+  const onSubmit = async (data: LoginFormValues) => {
+    const response = await login(data.email, data.password);
+
+    if (response.success) {
+      setSuccess(response.message);
+      setError("");
+      setTimeout(() => {
+        router.push("/dashboard");
+      }, 100);
+      return;
+    }
+
+    setError(response.message);
+    setSuccess("");
   };
 
   return (
     <form
-      onSubmit={handleSubmit(login as SubmitHandler<FieldValues>)}
+      onSubmit={handleSubmit(onSubmit as SubmitHandler<FieldValues>)}
       className="border h-fit p-5 min-w-[400px] space-y-6"
     >
+      {error && (
+        <span className="py-2 px-3 flex justify-center items-center bg-red-500">
+          {error}
+        </span>
+      )}
+      {success && (
+        <span className="py-2 px-3 flex justify-center items-center bg-green-500">
+          {success}
+        </span>
+      )}
       <h1 className="text-3xl text-center">Login</h1>
       <div className="flex flex-col">
         <label htmlFor="email">Email</label>
