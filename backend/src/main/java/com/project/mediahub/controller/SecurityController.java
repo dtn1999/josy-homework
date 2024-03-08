@@ -5,6 +5,9 @@ import com.project.mediahub.model.payload.LoginRequest;
 import com.project.mediahub.model.payload.RegistrationRequest;
 import com.project.mediahub.model.payload.ResetPasswordRequest;
 import com.project.mediahub.service.security.AuthenticationService;
+import com.project.mediahub.service.security.TokenService;
+import com.project.mediahub.util.JwtTokenUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class SecurityController {
     private final AuthenticationService authenticationService;
+    private final TokenService tokenService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@RequestBody @Valid RegistrationRequest request) {
@@ -33,9 +37,11 @@ public class SecurityController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse> logout() {
+    public ResponseEntity<ApiResponse> logout(final HttpServletRequest request) {
         log.info("Logging out user with the following information");
-        return ResponseEntity.ok(ApiResponse.builder().build());
+        JwtTokenUtil.extractTokenFromRequest(request).ifPresent(tokenService::blackListToken);
+        ApiResponse logoutResponse = ApiResponse.success("User logged out successfully", null);
+        return ResponseEntity.ok(logoutResponse);
     }
 
     @PutMapping
