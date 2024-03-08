@@ -21,5 +21,5 @@ public class Upload extends BaseEntity {
     private String filename;
 
     @OneToOne(mappedBy = "upload")
-    private Notice notice;
+    private Note note;
 }

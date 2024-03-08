@@ -1,6 +1,11 @@
 spring:
   mvc:
     static-path-pattern: "/**"
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 500KB
+      max-request-size: 500KB
 
   jpa:
     open-in-view: false

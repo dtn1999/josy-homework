@@ -21,6 +21,6 @@ public class Tag extends BaseEntity {
 
     @ManyToMany
     @ToString.Exclude
-    private Set<Notice> notices;
+    private Set<Note> notes;
 
 }

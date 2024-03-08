@@ -13,7 +13,7 @@ import java.util.Set;
 @SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Notice extends BaseEntity {
+public class Note extends BaseEntity {
     @Column(name = "title", nullable = false)
     private String title;
     @Column(name = "text", nullable = false, columnDefinition = "TEXT")
