@@ -31,14 +31,14 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
                         request
                                 .requestMatchers(
-                                        PathRequest.toStaticResources().atCommonLocations(),
-                                        AntPathRequestMatcher.antMatcher("/create-notice")
+                                        "/api/notes/**"
                                 )
                                 .permitAll()
-                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 )
                 .formLogin(AbstractHttpConfigurer::disable)
                 .logout(AbstractHttpConfigurer::disable)
