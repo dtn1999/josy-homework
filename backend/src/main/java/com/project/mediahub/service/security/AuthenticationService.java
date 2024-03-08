@@ -3,6 +3,7 @@ package com.project.mediahub.service.security;
 import com.project.mediahub.model.payload.ApiResponse;
 import com.project.mediahub.model.payload.AuthResponse;
 import com.project.mediahub.model.payload.RegistrationRequest;
+import com.project.mediahub.model.payload.ResetPasswordRequest;
 import com.project.mediahub.util.JwtTokenUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -58,6 +60,17 @@ public class AuthenticationService {
                     .success(false)
                     .build();
         }
+    }
+
+
+    public ApiResponse resetPassword(final ResetPasswordRequest request) {
+        UserDetails userDetails = this.userService.loadUserByUsername(request.getEmail());
+        if (userDetails == null) {
+            return ApiResponse.failure("User not found");
+        }
+        this.userService.updatePassword(userDetails, request.getPassword());
+        AuthResponse accessToken = generateAuthResponse(request.getEmail());
+        return ApiResponse.success("Password reset successfully", accessToken);
     }
 
 

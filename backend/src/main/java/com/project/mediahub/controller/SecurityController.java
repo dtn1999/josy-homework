@@ -47,7 +47,8 @@ public class SecurityController {
     @PutMapping
     public ResponseEntity<ApiResponse> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
         log.info("Resetting password for user with the following information: {}", request);
-        return ResponseEntity.ok(ApiResponse.builder().build());
+        ApiResponse resetPasswordResponse = authenticationService.resetPassword(request);
+        return ResponseEntity.ok(resetPasswordResponse);
     }
 
 }

@@ -1,6 +1,8 @@
 spring:
   mvc:
     static-path-pattern: "/**"
+    problemdetails:
+      enabled: true
   servlet:
     multipart:
       enabled: true
@@ -21,7 +23,6 @@ spring:
           time_zone: UTC
   main:
     allow-bean-definition-overriding: true
-
   datasource:
     url: jdbc:h2:file:./data/mediahub;AUTO_SERVER=TRUE
     username: mediahub

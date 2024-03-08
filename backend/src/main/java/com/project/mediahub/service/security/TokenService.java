@@ -1,7 +1,7 @@
 package com.project.mediahub.service.security;
 
 import com.project.mediahub.model.entity.BlackListedToken;
-import com.project.mediahub.model.entity.BlackListedTokenRepository;
+import com.project.mediahub.repository.BlackListedTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

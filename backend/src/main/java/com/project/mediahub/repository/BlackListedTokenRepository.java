@@ -1,5 +1,6 @@
-package com.project.mediahub.model.entity;
+package com.project.mediahub.repository;
 
+import com.project.mediahub.model.entity.BlackListedToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

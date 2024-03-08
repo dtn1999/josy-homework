@@ -1,6 +1,6 @@
 package com.project.mediahub.config;
 
-import com.project.mediahub.model.entity.BlackListedTokenRepository;
+import com.project.mediahub.repository.BlackListedTokenRepository;
 import com.project.mediahub.repository.UserRepository;
 import com.project.mediahub.service.security.AuthenticationService;
 import com.project.mediahub.service.security.JwtTokenFilter;
@@ -35,7 +35,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
                         request
-                                .requestMatchers("/api/auth/**")
+                                .requestMatchers("/api/auth/register", "/api/auth/login")
                                 .permitAll()
                                 .anyRequest().authenticated()
                 )
