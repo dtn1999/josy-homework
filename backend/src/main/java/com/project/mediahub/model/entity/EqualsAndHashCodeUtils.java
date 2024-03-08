@@ -1,5 +1,6 @@
-package com.project.mediahub.model;
+package com.project.mediahub.model.entity;
 
+import com.project.mediahub.model.entity.BaseEntity;
 import lombok.experimental.UtilityClass;
 import org.hibernate.proxy.HibernateProxy;
 

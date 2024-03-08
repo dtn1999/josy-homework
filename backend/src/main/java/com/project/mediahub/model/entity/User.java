@@ -1,4 +1,4 @@
-package com.project.mediahub.model;
+package com.project.mediahub.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -1,9 +1,6 @@
-package com.project.mediahub.model;
+package com.project.mediahub.model.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -11,6 +8,7 @@ import java.util.Set;
 
 @Getter
 @Setter
+@Entity
 @ToString
 @SuperBuilder
 @NoArgsConstructor
@@ -20,9 +18,8 @@ public class Notice extends BaseEntity {
     private String title;
     @Column(name = "text", nullable = false, columnDefinition = "TEXT")
     private String text;
-    private Set<String> links;
-    @Column(name = "image_url")
-    private String imageUrl;
+    @OneToOne(cascade = CascadeType.ALL)
+    private Upload upload;
 
     @ManyToMany
     @JoinTable(
@@ -30,5 +27,6 @@ public class Notice extends BaseEntity {
             joinColumns = @JoinColumn(name = "notice_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")
     )
+    @ToString.Exclude
     private Set<Tag> tags;
 }

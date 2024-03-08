@@ -1,7 +1,7 @@
 package com.project.mediahub.service;
 
-import com.project.mediahub.model.ApiResponse;
-import com.project.mediahub.model.RegistrationRequest;
+import com.project.mediahub.model.payload.ApiResponse;
+import com.project.mediahub.model.payload.RegistrationRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

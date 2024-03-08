@@ -1,4 +1,4 @@
-package com.project.mediahub.model;
+package com.project.mediahub.model.payload;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class ApiResponse {
     private String message;
     private boolean success;
+    private Object data;
 }

@@ -1,7 +1,7 @@
 package com.project.mediahub.service;
 
-import com.project.mediahub.model.User;
-import com.project.mediahub.model.RegistrationRequest;
+import com.project.mediahub.model.entity.User;
+import com.project.mediahub.model.payload.RegistrationRequest;
 import com.project.mediahub.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
