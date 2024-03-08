@@ -28,7 +28,8 @@ public class SecurityController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse> login(@RequestBody @Valid LoginRequest request) {
         log.info("Logging in user with the following information: {}", request);
-        return ResponseEntity.ok(ApiResponse.builder().build());
+        ApiResponse loginResponse = authenticationService.login(request.getEmail(), request.getPassword());
+        return ResponseEntity.ok(loginResponse);
     }
 
     @PostMapping("/logout")

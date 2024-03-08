@@ -1,5 +1,6 @@
 package com.project.mediahub.service.security;
 
+import com.project.mediahub.model.UserAlreadyExists;
 import com.project.mediahub.model.entity.User;
 import com.project.mediahub.model.payload.RegistrationRequest;
 import com.project.mediahub.repository.UserRepository;
@@ -9,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetailsPasswordService;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class UserService implements UserDetailsPasswordService, UserDetailsService {
@@ -33,6 +36,13 @@ public class UserService implements UserDetailsPasswordService, UserDetailsServi
     }
 
     public void register(final RegistrationRequest request) {
+        // check if user already exists
+        Optional<User> potentialExistingUser = this.profileRepository.findByEmail(request.getEmail());
+        if (potentialExistingUser.isPresent()) {
+            throw new UserAlreadyExists(
+                    String.format("User with email %s already exists", request.getEmail())
+            );
+        }
         this.profileRepository.save(User.builder()
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())

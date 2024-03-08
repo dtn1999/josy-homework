@@ -1,8 +1,10 @@
 package com.project.mediahub.config;
 
+import com.project.mediahub.model.entity.BlackListedTokenRepository;
 import com.project.mediahub.repository.UserRepository;
 import com.project.mediahub.service.security.AuthenticationService;
 import com.project.mediahub.service.security.JwtTokenFilter;
+import com.project.mediahub.service.security.TokenService;
 import com.project.mediahub.service.security.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,8 +46,10 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public JwtTokenFilter jwtTokenFilter(UserService userService) {
-        return new JwtTokenFilter(userService);
+    public JwtTokenFilter jwtTokenFilter(
+            UserService userService,
+            TokenService tokenService) {
+        return new JwtTokenFilter(userService, tokenService);
     }
 
 
@@ -70,6 +74,12 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
             DaoAuthenticationProvider authenticationProvider) {
         return new AuthenticationService(userService, authenticationProvider);
     }
+
+    @Bean
+    public TokenService tokenService(BlackListedTokenRepository repository) {
+        return new TokenService(repository);
+    }
+
 
     @Bean
     public AuthenticationManagerBuilder authenticationManagerBuilder(

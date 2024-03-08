@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,10 +17,13 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter {
     private final UserService userService;
+    private final TokenService tokenService;
 
 
     @Override
@@ -28,17 +32,22 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain chain) throws ServletException, IOException {
         // Get authorization header and validate
-        final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (StringUtils.hasText(header) || Objects.isNull(header) || !header.startsWith("Bearer ")) {
+        Optional<String> optionalToken = JwtTokenUtil.extractTokenFromRequest(request);
+        if (optionalToken.isEmpty()) {
+            chain.doFilter(request, response);
+            return;
+        }
+        // Get jwt token and validate
+        final String token = optionalToken.get();
+        if (!JwtTokenUtil.validate(token)) {
             chain.doFilter(request, response);
             return;
         }
 
-        // Get jwt token and validate
-        final String token = header.split(" ")[1].trim();
-        if (!JwtTokenUtil.validate(token)) {
+        if (tokenService.isTokenBlackListed(token)) {
             chain.doFilter(request, response);
-            return;
+        } else {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
 
         // Get user identity and set it on the spring security context
@@ -59,7 +68,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             chain.doFilter(request, response);
         } catch (Exception e) {
-            chain.doFilter(request, response);
+            log.error("Failed to set user authentication", e);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 }
