@@ -1,4 +1,4 @@
-package com.project.mediahub.service;
+package com.project.mediahub.service.note;
 
 import com.project.mediahub.model.entity.Upload;
 import org.springframework.core.io.Resource;

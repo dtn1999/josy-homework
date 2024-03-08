@@ -4,14 +4,12 @@ import com.project.mediahub.model.payload.ApiResponse;
 import com.project.mediahub.model.payload.LoginRequest;
 import com.project.mediahub.model.payload.RegistrationRequest;
 import com.project.mediahub.model.payload.ResetPasswordRequest;
-import com.project.mediahub.service.AuthenticationService;
+import com.project.mediahub.service.security.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.security.Principal;
 
 @Slf4j
 @RestController
@@ -23,7 +21,8 @@ public class SecurityController {
     @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@RequestBody @Valid RegistrationRequest request) {
         log.info("Registering user with the following information: {}", request);
-        return ResponseEntity.ok(ApiResponse.builder().build());
+        ApiResponse registrationResponse = authenticationService.register(request);
+        return ResponseEntity.ok(registrationResponse);
     }
 
     @PostMapping("/login")

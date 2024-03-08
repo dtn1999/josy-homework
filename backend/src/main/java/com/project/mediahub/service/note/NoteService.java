@@ -1,4 +1,4 @@
-package com.project.mediahub.service;
+package com.project.mediahub.service.note;
 
 public interface NoteService {
     void createNote();

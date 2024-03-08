@@ -1,4 +1,4 @@
-package com.project.mediahub.service;
+package com.project.mediahub.util;
 
 import com.project.mediahub.model.FileProcessingException;
 import lombok.experimental.UtilityClass;

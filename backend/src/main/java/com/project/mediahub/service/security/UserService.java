@@ -1,4 +1,4 @@
-package com.project.mediahub.service;
+package com.project.mediahub.service.security;
 
 import com.project.mediahub.model.entity.User;
 import com.project.mediahub.model.payload.RegistrationRequest;

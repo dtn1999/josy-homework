@@ -1,9 +1,8 @@
-package com.project.mediahub.service;
+package com.project.mediahub.service.note;
 
 import com.project.mediahub.model.FileProcessingException;
 import com.project.mediahub.model.entity.Upload;
-import com.project.mediahub.repository.UploadRepository;
-import lombok.RequiredArgsConstructor;
+import com.project.mediahub.util.UploadUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
