@@ -41,7 +41,7 @@ public class NoteController {
         }
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<ApiResponse> getAll() {
         log.info("Getting all notes");
         return ResponseEntity

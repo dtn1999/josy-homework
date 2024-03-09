@@ -28,7 +28,6 @@ public class ResourceInitializer implements CommandLineRunner {
               user.setEnabled(true);
           }
         });
-        userRepository.saveAll(users);
     }
 
 

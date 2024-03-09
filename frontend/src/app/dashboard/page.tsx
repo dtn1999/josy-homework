@@ -1,22 +1,21 @@
 "use client";
 import { NoticeTable } from "@/components/notice-table";
+import { useNotes } from "@/hooks/use-notes";
+import { FilterForm } from "./filter-form";
+import { NoteGrid } from "@/components/note-grid";
 
 export default function Home() {
+  const notes = useNotes();
+  console.log(notes);
   return (
-    <main className="">
-      <div className="px-10 flex mt-20">
-        <div className="flex items-center space-x-2">
-          <input
-            placeholder="search by title or tags"
-            className="w-[300px] px-1 py-2"
-          />
-          <button className="px-3 py-2 rounded bg-sky-500 font-light capitalize">
-            search
-          </button>
+    <main className="px-10 pt-20">
+      <div className="grid grid-cols-3 gap-5">
+        <div className="w-full">
+          <FilterForm />
         </div>
-      </div>
-      <div className="mt-4 w-full px-10">
-        <NoticeTable />
+        <div className="w-full col-span-2 bg-green-300">
+          <NoteGrid notes={notes} />
+        </div>
       </div>
     </main>
   );
