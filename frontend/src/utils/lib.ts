@@ -8,10 +8,26 @@ const backendApi = axios.create({
   },
 });
 
-export type ApiResponse = {
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  tags: string[];
+  createdAt: string;
+  imageUrl?: string;
+}
+
+export interface UserDetails {
+  email: string;
+  firstname: string;
+  lastname: string;
+}
+
+export interface ApiResponse<T> {
   message: string;
   success: boolean;
-};
+  data?: T;
+}
 
 export type ProblemDetail = {
   detail: string;
@@ -28,7 +44,7 @@ type BackendResponse = {
 
 export async function registerUser(
   details: RegistrationFormValues
-): Promise<ApiResponse> {
+): Promise<ApiResponse<undefined>> {
   try {
     const {
       data: { data, message },
@@ -55,7 +71,7 @@ export async function registerUser(
 export async function login(
   email: string,
   password: string
-): Promise<ApiResponse> {
+): Promise<ApiResponse<undefined>> {
   try {
     const {
       data: { data, message },
@@ -86,6 +102,30 @@ export async function logout() {
       },
     });
     removeToken();
+  } catch (error) {
+    const errorResponse = mapToProblemDetail(error as AxiosError);
+    return {
+      message: errorResponse?.detail || "An error occurred",
+      success: false,
+    };
+  }
+}
+
+export async function me(): Promise<ApiResponse<UserDetails>> {
+  const { token } = getAuthenticatedUser();
+  try {
+    const {
+      data: { data, message },
+    } = await backendApi.get("/auth/me", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return {
+      message,
+      success: true,
+      data,
+    };
   } catch (error) {
     const errorResponse = mapToProblemDetail(error as AxiosError);
     return {
@@ -171,6 +211,24 @@ export async function deleteNoteById(id: string) {
   const { token } = getAuthenticatedUser();
   try {
     const response = await backendApi.delete(`/notes/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    const errorResponse = mapToProblemDetail(error as AxiosError);
+    return {
+      message: errorResponse?.detail || "An error occurred",
+      success: false,
+    };
+  }
+}
+
+export async function getAllTags() {
+  const { token } = getAuthenticatedUser();
+  try {
+    const response = await backendApi.get("/notes/tags", {
       headers: {
         Authorization: `Bearer ${token}`,
       },

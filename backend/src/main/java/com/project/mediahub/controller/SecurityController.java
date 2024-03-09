@@ -12,7 +12,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
+import java.util.Objects;
 
 @Slf4j
 @RestController
@@ -43,6 +48,16 @@ public class SecurityController {
         JwtTokenUtil.extractTokenFromRequest(request).ifPresent(tokenService::blackListToken);
         ApiResponse logoutResponse = ApiResponse.success("User logged out successfully", null);
         return ResponseEntity.ok(logoutResponse);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<ApiResponse> me(UserDetails userDetails) {
+        if(Objects.isNull(userDetails)) {
+            throw new AuthenticationServiceException("User not found");
+        }
+        return ResponseEntity
+                .ok(ApiResponse.success(this.authenticationService.me(userDetails)))
+                ;
     }
 
     @PutMapping

@@ -21,6 +21,20 @@ public class ApiResponse {
                 .data(data)
                 .build();
     }
+    public static ApiResponse success(String message) {
+        return ApiResponse.builder()
+                .message(message)
+                .success(true)
+                .build();
+    }
+
+    public static ApiResponse success(Object data) {
+        return ApiResponse.builder()
+                .message("Success")
+                .success(true)
+                .data(data)
+                .build();
+    }
 
     public static ApiResponse failure(String message) {
         return ApiResponse.builder()

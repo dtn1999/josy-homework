@@ -1,9 +1,7 @@
 package com.project.mediahub.service.security;
 
-import com.project.mediahub.model.payload.ApiResponse;
-import com.project.mediahub.model.payload.AuthResponse;
-import com.project.mediahub.model.payload.RegistrationRequest;
-import com.project.mediahub.model.payload.ResetPasswordRequest;
+import com.project.mediahub.model.entity.User;
+import com.project.mediahub.model.payload.*;
 import com.project.mediahub.util.JwtTokenUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -72,4 +70,8 @@ public class AuthenticationService {
                 .build();
     }
 
+    public ApiResponse me(UserDetails userDetails) {
+        User user = (User)this.userService.loadUserByUsername(userDetails.getUsername());
+        return ApiResponse.success(UserInfo.from(user));
+    }
 }
