@@ -14,6 +14,7 @@ import com.project.mediahub.repository.UploadRepository;
 import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.FileAlreadyExistsException;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Service
 @RequiredArgsConstructor
 public class NoteService {
     public static final String NOTE_NOT_FOUND_ERROR_MESSAGE = "Note not found";

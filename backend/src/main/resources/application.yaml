@@ -1,7 +1,4 @@
 spring:
-  web:
-    resources:
-      static-locations: classpath:/uploads/
   mvc:
     static-path-pattern: "/**"
     problemdetails:
@@ -28,7 +25,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
   datasource:
-    url: jdbc:h2:file:./data/mediahub;AUTO_SERVER=TRUE
+    url: jdbc:h2:file:./data/db/mediahub;AUTO_SERVER=TRUE
     username: mediahub
     password: mediahub
     driver-class-name: org.h2.Driver

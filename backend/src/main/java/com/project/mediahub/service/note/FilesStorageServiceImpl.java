@@ -1,14 +1,14 @@
 package com.project.mediahub.service.note;
 
-import com.project.mediahub.controller.NoteController;
+import com.project.mediahub.config.EnvironmentUtil;
 import com.project.mediahub.model.FileProcessingException;
 import com.project.mediahub.model.entity.Upload;
 import com.project.mediahub.util.UploadUtils;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -20,8 +20,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Slf4j
+@RequiredArgsConstructor
 public class FilesStorageServiceImpl implements FilesStorageService {
-    private final Path root = Paths.get("uploads");
+    private final Path root = Paths.get("data/images/uploads");
+    private final EnvironmentUtil environmentUtil;
 
     @Override
     public void init() {
@@ -35,12 +37,11 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     @Override
     public Upload save(MultipartFile file) {
         try {
-            String filename = file.getOriginalFilename();
+            String originalFilename = Objects.requireNonNull(file.getOriginalFilename());
+            String extension = UploadUtils.extractFileExtension(originalFilename);
+            String filename = "%s.%s".formatted(UUID.randomUUID(), extension);
             Files.copy(file.getInputStream(), this.root.resolve(Objects.requireNonNull(filename)));
-            String imageUrl = MvcUriComponentsBuilder
-                    .fromMethodName(NoteController.class, "getFile", filename)
-                    .build()
-                    .toString();
+            String imageUrl = "%s/uploads/%s".formatted(environmentUtil.getServerUrl(), filename);
             return Upload.builder()
                     .filename(filename)
                     .imageUrl(imageUrl)
@@ -81,4 +82,5 @@ public class FilesStorageServiceImpl implements FilesStorageService {
             throw new FileProcessingException("Could not delete file!");
         }
     }
+
 }

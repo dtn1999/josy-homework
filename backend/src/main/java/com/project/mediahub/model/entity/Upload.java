@@ -16,12 +16,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Upload extends BaseEntity {
-
-    @Column(name = "filename", nullable = false)
+    @Column(name = "filename", nullable = false, unique = true)
     private String filename;
     @Column(name = "image_url", nullable = false)
     private String imageUrl;
-
-    @OneToOne(mappedBy = "upload")
-    private Note note;
 }

@@ -33,4 +33,8 @@ public class UploadUtils {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
+    public String removeSpecialCharacters(String fileName) {
+        return fileName.replaceAll("[^a-zA-Z0-9.-]", "");
+    }
+
 }

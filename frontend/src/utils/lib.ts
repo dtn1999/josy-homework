@@ -135,12 +135,18 @@ export async function createNote(data: FormData) {
   try {
     const response = await backendApi.post("/notes", data, {
       headers: {
+        "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log(response);
+    return {
+      message: "Note created successfully",
+      success: true,
+      data: response.data,
+    };
   } catch (error) {
     const errorResponse = mapToProblemDetail(error as AxiosError);
+    console.error("Error occurred during note creation", errorResponse);
     return {
       message: errorResponse?.detail || "An error occurred",
       success: false,
@@ -148,7 +154,7 @@ export async function createNote(data: FormData) {
   }
 }
 
-export async function getAllNotes() {
+export async function getAllNotes(): Promise<ApiResponse<Note[]>> {
   const { token } = getAuthenticatedUser();
   try {
     const response = await backendApi.get("/notes", {

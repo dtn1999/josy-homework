@@ -6,6 +6,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { z } from "zod";
 import { ApiResponse, registerUser } from "@/utils/lib";
 import { useRouter } from "next/navigation";
+import { AlterBanner } from "@/components/alert-banner";
 
 const schema = z
   .object({
@@ -45,7 +46,7 @@ export function RegistrationForm() {
     console.log(data);
     const response = (await registerUser(
       data as RegistrationFormValues
-    )) as ApiResponse;
+    )) as ApiResponse<undefined>;
     if (response.success === false) {
       setError(response.message);
       setSuccess(null);
@@ -65,16 +66,7 @@ export function RegistrationForm() {
       )}
       className="border h-fit p-5 min-w-[400px] space-y-6"
     >
-      {error && (
-        <span className="py-2 px-3 flex justify-center items-center bg-red-500">
-          {error}
-        </span>
-      )}
-      {success && (
-        <span className="py-2 px-3 flex justify-center items-center bg-green-500">
-          {success}
-        </span>
-      )}
+      <AlterBanner error={error} success={success} />
       <h1 className="text-3xl text-center">Create an account</h1>
       <div className="flex flex-col">
         <label htmlFor="firstname">First Name</label>

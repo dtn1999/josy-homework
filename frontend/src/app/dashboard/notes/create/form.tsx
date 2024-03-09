@@ -6,6 +6,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { TagInput } from "@/components/tag-input";
+import { createNote } from "@/utils/lib";
+import { useRouter } from "next/navigation";
+import { AlterBanner } from "@/components/alert-banner";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 
@@ -33,38 +36,45 @@ const schema = z.object({
 export type CreateNoticeFormValues = z.infer<typeof schema>;
 
 export function CreateNoticeForm() {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
     formState: { errors, dirtyFields },
-    watch,
   } = useForm({
     resolver: zodResolver(schema),
   });
 
   const [tags, setTags] = React.useState<string[]>([]);
   const [image, setImage] = React.useState<File | null>(null);
+  const [error, setError] = React.useState<string | null>("");
 
   const createNotice = async (data: CreateNoticeFormValues) => {
-    console.log(
-      "create notice",
-      "title",
-      data.title,
-      "content",
-      data.content,
-      "tags",
+    setError(null);
+    const formData = new FormData();
+    const payload = JSON.stringify({
+      title: data.title,
+      content: data.content,
       tags,
-      "image",
-      image
-    );
+    });
+
+    formData.append("payload", payload);
+    formData.append("image", image as Blob);
+    const response = await createNote(formData);
+    if (!response?.success) {
+      setError(response?.message || "An error occurred");
+      return;
+    }
+    router.push("/dashboard");
   };
-  watch();
   return (
     <form
       onSubmit={handleSubmit(createNotice as SubmitHandler<FieldValues>)}
       className="h-fit min-w-[400px] space-y-6 py-5"
     >
       <h1 className="text-3xl text-left">Create New Notice</h1>
+      <AlterBanner error={error} success={null} />
       <div className="flex flex-col">
         <label htmlFor="title">Title</label>
         <input
@@ -112,17 +122,17 @@ export function CreateNoticeForm() {
         {dirtyFields?.image && errors?.image && (
           <p className="py-1 text-red-500 font-light">{`${errors.image?.message}`}</p>
         )}
-        {
-          <div className="w-[400px] h-[400px] relative">
+        {image && (
+          <div className="w-40 h-40 relative">
             <Image
-              src="http://localhost:8080/api/notes/files/32b4253d-012e-4a27-b9e7-eb14679e7c55.jpg"
-              className="rounded-md absolute inset-0 w-full h-full size-cover"
+              src={URL.createObjectURL(image)}
+              className="rounded-md absolute inset-0 w-full h-full object-cover"
               alt="image preview"
               width={400}
               height={400}
             />
           </div>
-        }
+        )}
       </div>
       <button
         type="submit"

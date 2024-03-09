@@ -6,6 +6,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { login } from "@/utils/lib";
 import { useRouter } from "next/navigation";
+import { AlterBanner } from "@/components/alert-banner";
 
 const schema = z.object({
   email: z.string().email("Invalid email address"),
@@ -47,16 +48,7 @@ export function LoginForm() {
       onSubmit={handleSubmit(onSubmit as SubmitHandler<FieldValues>)}
       className="border h-fit p-5 min-w-[400px] space-y-6"
     >
-      {error && (
-        <span className="py-2 px-3 flex justify-center items-center bg-red-500">
-          {error}
-        </span>
-      )}
-      {success && (
-        <span className="py-2 px-3 flex justify-center items-center bg-green-500">
-          {success}
-        </span>
-      )}
+      <AlterBanner error={error} success={success} />
       <h1 className="text-3xl text-center">Login</h1>
       <div className="flex flex-col">
         <label htmlFor="email">Email</label>

@@ -22,7 +22,7 @@ export function NavBar() {
         <li className="">
           <Link
             className="flex items-center space-x-2 py-2 px-3 bg-green-500 rounded"
-            href="/notice/create"
+            href="/dashboard/notes/create"
           >
             <FaPlus className="w-8 h-8 text-white" title="Create Notice" />
             <span>Create Note</span>

@@ -1,6 +1,6 @@
 export function FilterForm() {
   return (
-    <form className="border py-2 px-1 h-fit bg-sky-900">
+    <form className="border py-2 px-1 h-fit bg-sky-900 text-white">
       <h3 className="font-bold">Filter</h3>
       <div className="pt-4 space-y-3">
         <div className="flex flex-col">

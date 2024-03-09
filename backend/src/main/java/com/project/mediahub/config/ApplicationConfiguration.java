@@ -21,6 +21,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -29,6 +31,22 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 )
 @Import(DummyDataProperties.class)
 public class ApplicationConfiguration implements WebMvcConfigurer {
+    private static final String[] CLASSPATH_RESOURCE_LOCATIONS =
+            {
+                    "classpath:/META-INF/resources/",
+                    "classpath:/resources/",
+                    "classpath:/static/",
+                    "classpath:/public/",
+                    "classpath:/custom/",
+                    "file:data/images/"
+            };
+
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/**")
+                .addResourceLocations(CLASSPATH_RESOURCE_LOCATIONS)
+                .setCachePeriod(3000);
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(
@@ -59,14 +77,6 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public JwtTokenFilter jwtTokenFilter(
-            UserService userService,
-            TokenService tokenService) {
-        return new JwtTokenFilter(userService, tokenService);
-    }
-
-
-    @Bean
     public DaoAuthenticationProvider authenticationManager(
             UserDetailsService userDetailsService,
             PasswordEncoder passwordEncoder) {
@@ -82,19 +92,6 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public AuthenticationService authenticationService(
-            final UserService userService,
-            DaoAuthenticationProvider authenticationProvider) {
-        return new AuthenticationService(userService, authenticationProvider);
-    }
-
-    @Bean
-    public TokenService tokenService(BlackListedTokenRepository repository) {
-        return new TokenService(repository);
-    }
-
-
-    @Bean
     public AuthenticationManagerBuilder authenticationManagerBuilder(
             AuthenticationManagerBuilder auth,
             DaoAuthenticationProvider provider) {
@@ -103,22 +100,8 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     }
 
     @Bean
-    public NoteService noteService(final NoteRepository noteRepository,
-                                   final FilesStorageService storageService,
-                                   final TagRepository tagRepository,
-                                   final UploadRepository uploadRepository) {
-        return new NoteService(noteRepository, tagRepository, uploadRepository, storageService);
-    }
-
-
-    @Bean
-    public FilesStorageService filesStorageService() {
-        return new FilesStorageServiceImpl();
-    }
-
-    @Bean
-    public UserService userService(final PasswordEncoder passwordEncoder, final UserRepository userRepository) {
-        return new UserService(passwordEncoder, userRepository);
+    public FilesStorageService filesStorageService(EnvironmentUtil environmentUtil) {
+        return new FilesStorageServiceImpl(environmentUtil);
     }
 
 }
