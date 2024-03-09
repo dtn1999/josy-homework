@@ -22,6 +22,10 @@ public class Note extends BaseEntity {
     @OneToOne(cascade = CascadeType.ALL)
     private Upload upload;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @JoinTable(
             name = "notice_tags",
             joinColumns = @JoinColumn(name = "notice_id", referencedColumnName = "id"),

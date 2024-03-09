@@ -5,15 +5,22 @@ import com.project.mediahub.model.NoteNotFoundException;
 import com.project.mediahub.model.entity.Note;
 import com.project.mediahub.model.entity.Tag;
 import com.project.mediahub.model.entity.Upload;
+import com.project.mediahub.model.entity.User;
 import com.project.mediahub.model.payload.ApiResponse;
 import com.project.mediahub.model.payload.CreateNotePayload;
 import com.project.mediahub.model.payload.NoteResponse;
 import com.project.mediahub.repository.NoteRepository;
 import com.project.mediahub.repository.TagRepository;
 import com.project.mediahub.repository.UploadRepository;
+import com.project.mediahub.repository.UserRepository;
+import com.project.mediahub.service.security.UserService;
+import jakarta.annotation.Nonnull;
 import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +34,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class NoteService {
     public static final String NOTE_NOT_FOUND_ERROR_MESSAGE = "Note not found";
+    private final UserRepository userRepository;
     private final NoteRepository noteRepository;
     private final TagRepository tagRepository;
     private final UploadRepository uploadRepository;
@@ -56,7 +64,8 @@ public class NoteService {
         return ApiResponse.success("Note created successfully", noteResponse);
     }
 
-    public ApiResponse getAllNotes() {
+    public ApiResponse getAllNotes(UserDetails userDetails) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
         List<Note> notes = this.noteRepository.findAll();
         List<NoteResponse> noteResponses = notes.stream()
                 .map(NoteResponse::from)
@@ -64,14 +73,14 @@ public class NoteService {
         return ApiResponse.success("Notes retrieved successfully", noteResponses);
     }
 
-    public ApiResponse getNoteById(@NonNull Long noteId) {
+    public ApiResponse getNoteById(@NonNull Long noteId, UserDetails userDetails) {
         Note note = this.noteRepository.findById(noteId)
                 .orElseThrow(() -> new NoteNotFoundException(NOTE_NOT_FOUND_ERROR_MESSAGE));
         NoteResponse noteResponse = NoteResponse.from(note);
         return ApiResponse.success("Note retrieved successfully", noteResponse);
     }
 
-    public ApiResponse updateNote(@NonNull Long noteId, @NonNull MultipartFile image, @Valid CreateNotePayload payload) {
+    public ApiResponse updateNote(@NonNull Long noteId, @NonNull MultipartFile image, @Valid CreateNotePayload payload, UserDetails userDetails) {
         Note note = this.noteRepository.findById(noteId)
                 .orElseThrow(() -> new NoteNotFoundException(NOTE_NOT_FOUND_ERROR_MESSAGE));
         note.setText(payload.getContent());
@@ -104,9 +113,14 @@ public class NoteService {
         return ApiResponse.success("Notes retrieved successfully", noteResponses);
     }
 
-    public ApiResponse deleteNoteById(@NonNull Long noteId) {
+    public ApiResponse deleteNoteById(@NonNull Long noteId, @Nonnull UserDetails userDetails) {
         Note note = this.noteRepository.findById(noteId)
                 .orElseThrow(() -> new NoteNotFoundException(NOTE_NOT_FOUND_ERROR_MESSAGE));
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow();
+        if (!note.getUser().equals(user)) {
+            return ApiResponse.failure("You are not authorized to delete this note");
+        }
         this.noteRepository.delete(note);
         return ApiResponse.success("Note deleted successfully", null);
     }

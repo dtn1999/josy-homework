@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,25 +44,29 @@ public class NoteController {
     }
 
     @GetMapping("")
-    public ResponseEntity<ApiResponse> getAll() {
+    public ResponseEntity<ApiResponse> getAll(@AuthenticationPrincipal UserDetails userDetails) {
         log.info("Getting all notes");
         return ResponseEntity
-                .ok(this.noteService.getAllNotes());
+                .ok(this.noteService.getAllNotes(userDetails));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse> getOne(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> getOne(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         log.info("Getting note with id: {}", id);
         return ResponseEntity
-                .ok(this.noteService.getNoteById(id));
+                .ok(this.noteService.getNoteById(id, userDetails));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse> update(@PathVariable Long id, @RequestParam("image") MultipartFile image, @RequestParam("payload") CreateNotePayload payload) {
+    public ResponseEntity<ApiResponse> update(
+            @PathVariable Long id,
+            @RequestParam("image") MultipartFile image,
+            @RequestParam("payload") CreateNotePayload payload,
+            @AuthenticationPrincipal UserDetails userDetails) {
         log.info("Updating note with the following information: {}", payload);
         try {
             return ResponseEntity
-                    .ok(this.noteService.updateNote(id, image, payload));
+                    .ok(this.noteService.updateNote(id, image, payload, userDetails));
         } catch (Exception e) {
             log.error("Error updating note: {}", e.getMessage());
             return ResponseEntity
@@ -70,10 +76,10 @@ public class NoteController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse> delete(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse> delete(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         log.info("Deleting note with id: {}", id);
         return ResponseEntity
-                .ok(this.noteService.deleteNoteById(id));
+                .ok(this.noteService.deleteNoteById(id, userDetails));
     }
 
     @GetMapping("/tags")
@@ -83,11 +89,4 @@ public class NoteController {
                 .ok(this.noteService.getAllTags());
     }
 
-
-    @GetMapping("/files/{filename:.+}")
-    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
-        Resource file = storageService.load(filename);
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
-    }
 }

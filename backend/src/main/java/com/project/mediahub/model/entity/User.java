@@ -2,6 +2,7 @@ package com.project.mediahub.model.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -30,6 +32,9 @@ public class User extends BaseEntity implements UserDetails {
     private String password;
     @Column(name = "enabled", nullable = false)
     private boolean enabled;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Note> notes;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
