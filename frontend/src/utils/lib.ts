@@ -95,6 +95,96 @@ export async function logout() {
   }
 }
 
+export async function createNote(data: FormData) {
+  const { token } = getAuthenticatedUser();
+  try {
+    const response = await backendApi.post("/notes", data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log(response);
+  } catch (error) {
+    const errorResponse = mapToProblemDetail(error as AxiosError);
+    return {
+      message: errorResponse?.detail || "An error occurred",
+      success: false,
+    };
+  }
+}
+
+export async function getAllNotes() {
+  const { token } = getAuthenticatedUser();
+  try {
+    const response = await backendApi.get("/notes", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    const errorResponse = mapToProblemDetail(error as AxiosError);
+    return {
+      message: errorResponse?.detail || "An error occurred",
+      success: false,
+    };
+  }
+}
+
+export async function getNoteById(id: string) {
+  const { token } = getAuthenticatedUser();
+  try {
+    const response = await backendApi.get(`/notes/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    const errorResponse = mapToProblemDetail(error as AxiosError);
+    return {
+      message: errorResponse?.detail || "An error occurred",
+      success: false,
+    };
+  }
+}
+
+export async function updateNoteById(id: string, data: FormData) {
+  const { token } = getAuthenticatedUser();
+  try {
+    const response = await backendApi.put(`/notes/${id}`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    const errorResponse = mapToProblemDetail(error as AxiosError);
+    return {
+      message: errorResponse?.detail || "An error occurred",
+      success: false,
+    };
+  }
+}
+
+export async function deleteNoteById(id: string) {
+  const { token } = getAuthenticatedUser();
+  try {
+    const response = await backendApi.delete(`/notes/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    const errorResponse = mapToProblemDetail(error as AxiosError);
+    return {
+      message: errorResponse?.detail || "An error occurred",
+      success: false,
+    };
+  }
+}
+
 function storeToken(token: string, username: string) {
   localStorage.setItem("token", token);
   localStorage.setItem("username", username);
