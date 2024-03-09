@@ -48,7 +48,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
                     .build();
         } catch (FileAlreadyExistsException e) {
             log.error("A file of that name already exists!", e);
-            throw new FileProcessingException("A file of that name already exists.");
+            throw new FileProcessingException("A file of that name already exists.", e);
         } catch (Exception e) {
             log.error("Could not save file!", e);
             throw new FileProcessingException(e.getMessage());

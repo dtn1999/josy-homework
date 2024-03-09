@@ -31,7 +31,7 @@ public class NoteResponse {
                 .tags(note.getTags().stream().map(Tag::getLabel).toList())
                 .imageUrl(
                         Optional.ofNullable(note.getUpload())
-                                .map(Upload::getFilename)
+                                .map(Upload::getImageUrl)
                                 .orElse(null)
                 )
                 .build();

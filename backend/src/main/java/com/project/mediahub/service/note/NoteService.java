@@ -1,6 +1,7 @@
 package com.project.mediahub.service.note;
 
-import com.project.mediahub.controller.NoteController;
+import com.project.mediahub.model.FileProcessingException;
+import com.project.mediahub.model.NoteNotFoundException;
 import com.project.mediahub.model.entity.Note;
 import com.project.mediahub.model.entity.Tag;
 import com.project.mediahub.model.entity.Upload;
@@ -9,22 +10,23 @@ import com.project.mediahub.model.payload.CreateNotePayload;
 import com.project.mediahub.model.payload.NoteResponse;
 import com.project.mediahub.repository.NoteRepository;
 import com.project.mediahub.repository.TagRepository;
+import com.project.mediahub.repository.UploadRepository;
 import jakarta.validation.Valid;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
-import java.util.HashSet;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class NoteService {
+    public static final String NOTE_NOT_FOUND_ERROR_MESSAGE = "Note not found";
     private final NoteRepository noteRepository;
     private final TagRepository tagRepository;
+    private final UploadRepository uploadRepository;
     private final FilesStorageService storageService;
 
     public ApiResponse createNote(@NonNull MultipartFile image, @Valid CreateNotePayload payload) {
@@ -42,53 +44,72 @@ public class NoteService {
         Set<Tag> tags = payload.getTags()
                 .stream()
                 .map(this::createTag)
-                .peek(tag -> {
-                    tag.getNotes().add(savedNote);
-                })
+                .peek(tag -> tag.addNote(savedNote))
                 .collect(Collectors.toSet());
-        List<Tag> saveTags = this.tagRepository.saveAll(tags);
-        savedNote.setTags(new HashSet<>(saveTags));
-        this.noteRepository.save(savedNote);
-
-        Resource file = storageService.load(uploadedImage.getFilename());
-        String url = getFileUrl(file);
+        this.tagRepository.saveAll(tags);
         NoteResponse noteResponse = NoteResponse.from(savedNote);
-        noteResponse.setImageUrl(url);
         // return the response
         return ApiResponse.success("Note created successfully", noteResponse);
     }
 
-    private String getFileUrl(Resource file) {
-        return MvcUriComponentsBuilder
-                .fromMethodName(NoteController.class, "getFile", file.getFilename())
-                .build()
-                .toString();
-    }
-
-    private NoteResponse map(Note note) {
-        Resource file = storageService.load(note.getUpload().getFilename());
-        String url = getFileUrl(file);
-        NoteResponse noteResponse = NoteResponse.from(note);
-        noteResponse.setImageUrl(url);
-        return noteResponse;
-    }
-
-
     public ApiResponse getAllNotes() {
         List<Note> notes = this.noteRepository.findAll();
         List<NoteResponse> noteResponses = notes.stream()
-                .map(note -> {
-                    Resource file = storageService.load(note.getUpload().getFilename());
-                    String url = getFileUrl(file);
-                    NoteResponse noteResponse = NoteResponse.from(note);
-                    noteResponse.setImageUrl(url);
-                    return noteResponse;
-                })
-                .collect(Collectors.toList());
+                .map(NoteResponse::from)
+                .toList();
         return ApiResponse.success("Notes retrieved successfully", noteResponses);
     }
 
-    public Tag createTag(@NonNull String label) {
+    public ApiResponse getNoteById(@NonNull Long noteId) {
+        Note note = this.noteRepository.findById(noteId)
+                .orElseThrow(() -> new NoteNotFoundException(NOTE_NOT_FOUND_ERROR_MESSAGE));
+        NoteResponse noteResponse = NoteResponse.from(note);
+        return ApiResponse.success("Note retrieved successfully", noteResponse);
+    }
+
+    public ApiResponse updateNote(@NonNull Long noteId, @NonNull MultipartFile image, @Valid CreateNotePayload payload) {
+        Note note = this.noteRepository.findById(noteId)
+                .orElseThrow(() -> new NoteNotFoundException(NOTE_NOT_FOUND_ERROR_MESSAGE));
+        note.setText(payload.getContent());
+        note.setTitle(payload.getTitle());
+        // save the image to the file system
+        this.updateUpload(note, image);
+
+        // create tags if they don't exist
+        Set<Tag> tags = payload.getTags()
+                .stream()
+                .map(this::createTag)
+                .peek(tag -> tag.addNote(note))
+                .collect(Collectors.toSet());
+        this.tagRepository.saveAll(tags);
+        NoteResponse noteResponse = NoteResponse.from(note);
+        // return the response
+        return ApiResponse.success("Note updated successfully", noteResponse);
+    }
+
+    public ApiResponse deleteNoteById(@NonNull Long noteId) {
+        Note note = this.noteRepository.findById(noteId)
+                .orElseThrow(() -> new NoteNotFoundException(NOTE_NOT_FOUND_ERROR_MESSAGE));
+        this.noteRepository.delete(note);
+        return ApiResponse.success("Note deleted successfully", null);
+    }
+
+    private void updateUpload(@NonNull Note note, @NonNull MultipartFile image) {
+        try {
+            Upload uploadedImage = this.storageService.save(image);
+            // delete old image
+            this.uploadRepository.delete(note.getUpload());
+            note.setUpload(uploadedImage);
+        } catch (FileProcessingException e) {
+            if (e.getCause() instanceof FileAlreadyExistsException) {
+                // no need to update the image
+                return;
+            }
+            throw e;
+        }
+    }
+
+    private Tag createTag(@NonNull String label) {
         return this.tagRepository.findByLabel(label)
                 .orElseGet(() -> Tag.builder().label(label).build());
     }

@@ -1,9 +1,6 @@
 package com.project.mediahub.config;
 
-import com.project.mediahub.repository.BlackListedTokenRepository;
-import com.project.mediahub.repository.NoteRepository;
-import com.project.mediahub.repository.TagRepository;
-import com.project.mediahub.repository.UserRepository;
+import com.project.mediahub.repository.*;
 import com.project.mediahub.service.note.FilesStorageService;
 import com.project.mediahub.service.note.FilesStorageServiceImpl;
 import com.project.mediahub.service.note.NoteService;
@@ -49,7 +46,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
                 })
                 .authorizeHttpRequests(request ->
                         request
-                                .requestMatchers("/api/auth/register", "/api/auth/login","/api/notes/files/**", "/uploads/**")
+                                .requestMatchers("/api/auth/register", "/api/auth/login", "/api/notes/files/**", "/uploads/**")
                                 .permitAll()
                                 .anyRequest().authenticated()
                 )
@@ -106,8 +103,9 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     @Bean
     public NoteService noteService(final NoteRepository noteRepository,
                                    final FilesStorageService storageService,
-                                   final TagRepository tagRepository) {
-        return new NoteService(noteRepository, tagRepository, storageService);
+                                   final TagRepository tagRepository,
+                                   final UploadRepository uploadRepository) {
+        return new NoteService(noteRepository, tagRepository, uploadRepository, storageService);
     }
 
 

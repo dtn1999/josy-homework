@@ -26,4 +26,13 @@ public class Tag extends BaseEntity {
     @ManyToMany(mappedBy = "tags", fetch = FetchType.EAGER)
     private Set<Note> notes = new HashSet<>();
 
+    public void addNote(Note note) {
+        notes.add(note);
+        note.getTags().add(this);
+    }
+
+    public void removeNote(Note note) {
+        notes.remove(note);
+        note.getTags().remove(this);
+    }
 }
