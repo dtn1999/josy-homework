@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.FileAlreadyExistsException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -85,6 +86,19 @@ public class NoteService {
         NoteResponse noteResponse = NoteResponse.from(note);
         // return the response
         return ApiResponse.success("Note updated successfully", noteResponse);
+    }
+
+    public ApiResponse filterNotesByTags(@NonNull Set<String> tags) {
+        Set<Note> filterResult = new HashSet<>();
+
+        this.tagRepository.findAllByTagsLabelIn(tags)
+                .forEach(tag -> filterResult.addAll(tag.getNotes()));
+
+        List<NoteResponse> noteResponses = filterResult.stream()
+                .map(NoteResponse::from)
+                .toList();
+
+        return ApiResponse.success("Notes retrieved successfully", noteResponses);
     }
 
     public ApiResponse deleteNoteById(@NonNull Long noteId) {
