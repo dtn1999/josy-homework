@@ -8,6 +8,7 @@ import com.project.mediahub.model.entity.Upload;
 import com.project.mediahub.model.entity.User;
 import com.project.mediahub.model.payload.ApiResponse;
 import com.project.mediahub.model.payload.CreateNotePayload;
+import com.project.mediahub.model.payload.FilterOptions;
 import com.project.mediahub.model.payload.NoteResponse;
 import com.project.mediahub.repository.NoteRepository;
 import com.project.mediahub.repository.TagRepository;
@@ -40,7 +41,23 @@ public class NoteService {
     private final UploadRepository uploadRepository;
     private final FilesStorageService storageService;
 
-    public ApiResponse createNote(@NonNull MultipartFile image, @Valid CreateNotePayload payload) {
+    public ApiResponse search(FilterOptions options, UserDetails userDetails) {
+        List<NoteResponse> foundNotes = this.noteRepository.findAllByDateRange(options.getFrom(), options.getTo())
+                .stream()
+                .filter(note -> note.getUser().getEmail().equals(userDetails.getUsername()))
+                .filter(note -> options.getTag().isBlank() || note.getTags().stream().anyMatch(tag -> tag.getLabel().toLowerCase().contains(options.getTag().toLowerCase())))
+                .map(NoteResponse::from)
+                .toList();
+        return ApiResponse.success("Notes retrieved successfully", foundNotes);
+    }
+
+    public ApiResponse createNote(
+            @NonNull MultipartFile image,
+            @Valid CreateNotePayload payload,
+            @NonNull UserDetails userDetails
+    ) {
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow();
         // save the image to the file system
         Upload uploadedImage = this.getUploadEntity(image);
         // create the note
@@ -48,6 +65,7 @@ public class NoteService {
                 .title(payload.getTitle())
                 .text(payload.getContent())
                 .upload(uploadedImage)
+                .user(user)
                 .build();
         Note savedNote = this.noteRepository.save(note);
 
@@ -65,9 +83,9 @@ public class NoteService {
     }
 
     public ApiResponse getAllNotes(UserDetails userDetails) {
-        SecurityContext securityContext = SecurityContextHolder.getContext();
-        List<Note> notes = this.noteRepository.findAll();
-        List<NoteResponse> noteResponses = notes.stream()
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow();
+        List<NoteResponse> noteResponses = user.getNotes().stream()
                 .map(NoteResponse::from)
                 .toList();
         return ApiResponse.success("Notes retrieved successfully", noteResponses);

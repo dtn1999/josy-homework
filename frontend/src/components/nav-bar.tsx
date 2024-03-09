@@ -5,6 +5,7 @@ import { FaPlus } from "react-icons/fa";
 import ProfileMenu from "./profile-menu";
 import { useRouter } from "next/navigation";
 import { getAuthenticatedUser } from "@/utils/lib";
+import { FaHome } from "react-icons/fa";
 
 export function NavBar() {
   const router = useRouter();
@@ -17,11 +18,18 @@ export function NavBar() {
   }, []);
 
   return (
-    <nav className="flex w-full items-center px-10 py-2 border-b">
+    <nav className="flex w-full items-center px-10 py-4 border-b">
       <ul className="w-full flex justify-between items-center ">
-        <li className="">
+        <li className="flex items-center space-x-3">
           <Link
-            className="flex items-center space-x-2 py-2 px-3 bg-green-500 rounded"
+            className="flex text-xl space-x-2 items-center font-bold py-2 px-3 bg-sky-800 rounded text-white"
+            href="/dashboard"
+          >
+            <FaHome className="w-8 h-8 text-white" title="Dashboard" />
+            <span>Dashboard</span>
+          </Link>
+          <Link
+            className="flex items-center space-x-2 py-2 px-3 bg-green-500 rounded text-white"
             href="/dashboard/notes/create"
           >
             <FaPlus className="w-8 h-8 text-white" title="Create Notice" />

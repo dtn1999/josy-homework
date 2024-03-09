@@ -3,6 +3,7 @@ package com.project.mediahub.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.mediahub.model.payload.ApiResponse;
 import com.project.mediahub.model.payload.CreateNotePayload;
+import com.project.mediahub.model.payload.FilterOptions;
 import com.project.mediahub.service.note.FilesStorageService;
 import com.project.mediahub.service.note.NoteService;
 import lombok.RequiredArgsConstructor;
@@ -24,16 +25,27 @@ public class NoteController {
     private final NoteService noteService;
     private final FilesStorageService storageService;
 
+    @PostMapping("/search")
+    public ResponseEntity<ApiResponse> search(
+            @RequestBody FilterOptions filterOptions,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        log.info("Searching notes with the following filter options: {}", filterOptions);
+        return ResponseEntity
+                .ok(this.noteService.search(filterOptions, userDetails));
+    }
+
     @PostMapping("")
     public ResponseEntity<ApiResponse> create(
             @RequestParam("image") MultipartFile image,
-            @RequestParam("payload") String payloadJson
+            @RequestParam("payload") String payloadJson,
+            @AuthenticationPrincipal UserDetails userDetails
     ) {
         try {
             CreateNotePayload payload = this.mapper.readValue(payloadJson, CreateNotePayload.class);
             log.info("Creating note with the following information: {}, {}", payload, image);
             return ResponseEntity
-                    .ok(this.noteService.createNote(image, payload));
+                    .ok(this.noteService.createNote(image, payload, userDetails));
         } catch (Exception e) {
             log.error("Error parsing payload: {}", e.getMessage());
             return ResponseEntity

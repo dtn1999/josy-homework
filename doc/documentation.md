@@ -66,3 +66,14 @@ screenshots below show the user management use cases.
 - Forgot password
   ![](./images/forgot-password-screen.png)
 
+2. Note management
+Every user can create, update, delete and view his notes. The screenshots below show the note management use cases.
+
+- View notes
+  ![](./images/view-notes-screen.png)
+
+- View a single note
+  ![](./images/view-note-screen.png)
+
+- Create note
+  ![](./images/create-note-screen.png)
