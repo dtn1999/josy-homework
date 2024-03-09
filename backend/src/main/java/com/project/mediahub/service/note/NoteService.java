@@ -108,6 +108,14 @@ public class NoteService {
         return ApiResponse.success("Note deleted successfully", null);
     }
 
+    public ApiResponse getAllTags() {
+        List<Tag> tags = this.tagRepository.findAll();
+        List<String> tagLabels = tags.stream()
+                .map(Tag::getLabel)
+                .toList();
+        return ApiResponse.success("Tags retrieved successfully", tagLabels);
+    }
+
     private void updateUpload(@NonNull Note note, @NonNull MultipartFile image) {
         try {
             Upload uploadedImage = this.storageService.save(image);

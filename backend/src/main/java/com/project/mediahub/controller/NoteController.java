@@ -30,29 +30,59 @@ public class NoteController {
         try {
             CreateNotePayload payload = this.mapper.readValue(payloadJson, CreateNotePayload.class);
             log.info("Creating note with the following information: {}, {}", payload, image);
-            ApiResponse responseNote = this.noteService.createNote(image, payload);
-            return ResponseEntity.ok(responseNote);
+            return ResponseEntity
+                    .ok(this.noteService.createNote(image, payload));
         } catch (Exception e) {
             log.error("Error parsing payload: {}", e.getMessage());
-            return ResponseEntity.badRequest().body(ApiResponse.builder().message("Invalid payload").success(false).build());
+            return ResponseEntity
+                    .badRequest()
+                    .body(ApiResponse.failure("Error parsing payload"));
+
         }
     }
 
     @GetMapping("/")
     public ResponseEntity<ApiResponse> getAll() {
-        return ResponseEntity.ok(ApiResponse.builder().build());
+        log.info("Getting all notes");
+        return ResponseEntity
+                .ok(this.noteService.getAllNotes());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ApiResponse> getOne(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.builder().build());
+        log.info("Getting note with id: {}", id);
+        return ResponseEntity
+                .ok(this.noteService.getNoteById(id));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse> update(@PathVariable Long id, @RequestParam("image") MultipartFile image, @RequestParam("payload") CreateNotePayload payload) {
         log.info("Updating note with the following information: {}", payload);
-        return ResponseEntity.ok(ApiResponse.builder().build());
+        try {
+            return ResponseEntity
+                    .ok(this.noteService.updateNote(id, image, payload));
+        } catch (Exception e) {
+            log.error("Error updating note: {}", e.getMessage());
+            return ResponseEntity
+                    .badRequest()
+                    .body(ApiResponse.failure("Error updating note"));
+        }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse> delete(@PathVariable Long id) {
+        log.info("Deleting note with id: {}", id);
+        return ResponseEntity
+                .ok(this.noteService.deleteNoteById(id));
+    }
+
+    @GetMapping("/tags")
+    public ResponseEntity<ApiResponse> getAllTags() {
+        log.info("Getting all tags");
+        return ResponseEntity
+                .ok(this.noteService.getAllTags());
+    }
+
 
     @GetMapping("/files/{filename:.+}")
     public ResponseEntity<Resource> getFile(@PathVariable String filename) {
