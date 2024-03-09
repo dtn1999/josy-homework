@@ -1,5 +1,6 @@
 package com.project.mediahub.service.note;
 
+import com.project.mediahub.controller.NoteController;
 import com.project.mediahub.model.FileProcessingException;
 import com.project.mediahub.model.entity.Upload;
 import com.project.mediahub.util.UploadUtils;
@@ -7,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -36,8 +38,13 @@ public class FilesStorageServiceImpl implements FilesStorageService {
             String extension = UploadUtils.extractFileExtension(Objects.requireNonNull(file.getOriginalFilename()));
             String filename = String.format("%s.%s", UUID.randomUUID(), extension);
             Files.copy(file.getInputStream(), this.root.resolve(Objects.requireNonNull(filename)));
+            String imageUrl = MvcUriComponentsBuilder
+                    .fromMethodName(NoteController.class, "getFile", filename)
+                    .build()
+                    .toString();
             return Upload.builder()
                     .filename(filename)
+                    .imageUrl(imageUrl)
                     .build();
         } catch (FileAlreadyExistsException e) {
             log.error("A file of that name already exists!", e);

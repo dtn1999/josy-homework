@@ -19,6 +19,8 @@ public class Upload extends BaseEntity {
 
     @Column(name = "filename", nullable = false)
     private String filename;
+    @Column(name = "image_url", nullable = false)
+    private String imageUrl;
 
     @OneToOne(mappedBy = "upload")
     private Note note;

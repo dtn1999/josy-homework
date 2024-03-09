@@ -51,16 +51,42 @@ public class NoteService {
         this.noteRepository.save(savedNote);
 
         Resource file = storageService.load(uploadedImage.getFilename());
-        String url = MvcUriComponentsBuilder
-                .fromMethodName(NoteController.class, "getFile", file.getFilename())
-                .build()
-                .toString();
+        String url = getFileUrl(file);
         NoteResponse noteResponse = NoteResponse.from(savedNote);
         noteResponse.setImageUrl(url);
         // return the response
         return ApiResponse.success("Note created successfully", noteResponse);
     }
 
+    private String getFileUrl(Resource file) {
+        return MvcUriComponentsBuilder
+                .fromMethodName(NoteController.class, "getFile", file.getFilename())
+                .build()
+                .toString();
+    }
+
+    private NoteResponse map(Note note) {
+        Resource file = storageService.load(note.getUpload().getFilename());
+        String url = getFileUrl(file);
+        NoteResponse noteResponse = NoteResponse.from(note);
+        noteResponse.setImageUrl(url);
+        return noteResponse;
+    }
+
+
+    public ApiResponse getAllNotes() {
+        List<Note> notes = this.noteRepository.findAll();
+        List<NoteResponse> noteResponses = notes.stream()
+                .map(note -> {
+                    Resource file = storageService.load(note.getUpload().getFilename());
+                    String url = getFileUrl(file);
+                    NoteResponse noteResponse = NoteResponse.from(note);
+                    noteResponse.setImageUrl(url);
+                    return noteResponse;
+                })
+                .collect(Collectors.toList());
+        return ApiResponse.success("Notes retrieved successfully", noteResponses);
+    }
 
     public Tag createTag(@NonNull String label) {
         return this.tagRepository.findByLabel(label)
