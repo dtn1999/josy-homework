@@ -50,6 +50,7 @@ public class NoteService {
                 .peek(tag -> tag.addNote(savedNote))
                 .collect(Collectors.toSet());
         this.tagRepository.saveAll(tags);
+        this.noteRepository.save(savedNote);
         NoteResponse noteResponse = NoteResponse.from(savedNote);
         // return the response
         return ApiResponse.success("Note created successfully", noteResponse);
