@@ -80,6 +80,7 @@ export async function login(
     };
   } catch (error) {
     const errorResponse = mapToProblemDetail(error as AxiosError);
+    console.error("Error occurred during login", errorResponse);
     return {
       message: errorResponse?.detail || "An error occurred",
       success: false,
@@ -105,7 +106,7 @@ export async function logout() {
   }
 }
 
-export async function me(): Promise<ApiResponse<UserDetails>> {
+export async function getMyProfile(): Promise<ApiResponse<UserDetails>> {
   const { token } = getAuthenticatedUser();
   try {
     const {

@@ -2,7 +2,7 @@
 import React from "react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FieldValues, SubmitHandler, set, useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { login } from "@/utils/lib";
 import { useRouter } from "next/navigation";
