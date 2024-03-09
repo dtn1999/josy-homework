@@ -35,8 +35,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     @Override
     public Upload save(MultipartFile file) {
         try {
-            String extension = UploadUtils.extractFileExtension(Objects.requireNonNull(file.getOriginalFilename()));
-            String filename = String.format("%s.%s", UUID.randomUUID(), extension);
+            String filename = file.getOriginalFilename();
             Files.copy(file.getInputStream(), this.root.resolve(Objects.requireNonNull(filename)));
             String imageUrl = MvcUriComponentsBuilder
                     .fromMethodName(NoteController.class, "getFile", filename)

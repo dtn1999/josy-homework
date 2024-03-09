@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationServiceException;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,13 +52,12 @@ public class SecurityController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse> me(UserDetails userDetails) {
+    public ResponseEntity<ApiResponse> me(@AuthenticationPrincipal  UserDetails userDetails) {
         if(Objects.isNull(userDetails)) {
             throw new AuthenticationServiceException("User not found");
         }
         return ResponseEntity
-                .ok(ApiResponse.success(this.authenticationService.me(userDetails)))
-                ;
+                .ok(this.authenticationService.me(userDetails));
     }
 
     @PutMapping

@@ -66,7 +66,6 @@ public class AuthenticationService {
         String accessToken = JwtTokenUtil.generateToken(username);
         return AuthResponse.builder()
                 .accessToken(accessToken)
-                .username(username)
                 .build();
     }
 

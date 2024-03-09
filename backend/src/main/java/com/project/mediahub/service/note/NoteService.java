@@ -32,7 +32,7 @@ public class NoteService {
 
     public ApiResponse createNote(@NonNull MultipartFile image, @Valid CreateNotePayload payload) {
         // save the image to the file system
-        Upload uploadedImage = this.storageService.save(image);
+        Upload uploadedImage = this.getUploadEntity(image);
         // create the note
         Note note = Note.builder()
                 .title(payload.getTitle())
@@ -114,6 +114,18 @@ public class NoteService {
                 .map(Tag::getLabel)
                 .toList();
         return ApiResponse.success("Tags retrieved successfully", tagLabels);
+    }
+
+    private Upload getUploadEntity(MultipartFile image) {
+        try {
+            return this.storageService.save(image);
+        } catch (FileProcessingException exception) {
+            if (exception.getCause() instanceof FileAlreadyExistsException) {
+                return this.uploadRepository.findByFilename(image.getOriginalFilename())
+                        .orElseThrow(() -> new FileProcessingException("File not found"));
+            }
+            throw exception;
+        }
     }
 
     private void updateUpload(@NonNull Note note, @NonNull MultipartFile image) {

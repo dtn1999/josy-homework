@@ -36,12 +36,6 @@ export type ProblemDetail = {
   type: string;
 };
 
-type BackendResponse = {
-  data: unknown;
-  message: string;
-  success: boolean;
-};
-
 export async function registerUser(
   details: RegistrationFormValues
 ): Promise<ApiResponse<undefined>> {
