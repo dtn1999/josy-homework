@@ -24,6 +24,7 @@ spring:
         use_sql_comments: true
         jdbc:
           time_zone: UTC
+
   main:
     allow-bean-definition-overriding: true
   datasource:
@@ -31,6 +32,18 @@ spring:
     username: mediahub
     password: mediahub
     driver-class-name: org.h2.Driver
+
+dummy:
+  users:
+    - firstName: "John"
+      lastName: "Doe"
+      email: "johndoe@email.com"
+      password: "JohnDoe"
+
+    - firstName: "Jane"
+      lastName: "Doe"
+      email: "janedoe@email.com"
+      password: "JaneDoe"
 
 logging:
   level:

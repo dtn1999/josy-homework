@@ -10,6 +10,7 @@ import com.project.mediahub.service.security.TokenService;
 import com.project.mediahub.service.security.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -26,6 +27,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableJpaRepositories(
         basePackages = "com.project.mediahub.repository"
 )
+@Import(DummyDataProperties.class)
 public class ApplicationConfiguration implements WebMvcConfigurer {
 
     @Bean
