@@ -23,11 +23,13 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.FileAlreadyExistsException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,13 +44,12 @@ public class NoteService {
     private final FilesStorageService storageService;
 
     public ApiResponse search(FilterOptions options, UserDetails userDetails) {
-        List<NoteResponse> foundNotes = this.noteRepository.findAllByDateRange(options.getFrom(), options.getTo())
+        Set<NoteResponse> foundNotes = this.fetchNotesByDateRange(options, userDetails)
                 .stream()
-                .filter(note -> note.getUser().getEmail().equals(userDetails.getUsername()))
-                .filter(note -> options.getTag().isBlank() || note.getTags().stream().anyMatch(tag -> tag.getLabel().toLowerCase().contains(options.getTag().toLowerCase())))
+                .filter(note -> this.match(note, options))
                 .map(NoteResponse::from)
-                .toList();
-        return ApiResponse.success("Notes retrieved successfully", foundNotes);
+                .collect(Collectors.toSet());
+        return ApiResponse.success(foundNotes);
     }
 
     public ApiResponse createNote(
@@ -181,5 +182,31 @@ public class NoteService {
     private Tag createTag(@NonNull String label) {
         return this.tagRepository.findByLabel(label)
                 .orElseGet(() -> Tag.builder().label(label).build());
+    }
+
+    private Set<Note> fetchNotesByDateRange(FilterOptions options, UserDetails userDetails) {
+        User user = userRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow();
+        if (Objects.isNull(options.getFrom()) || Objects.isNull(options.getTo())) {
+            return user.getNotes();
+        }
+        return this.noteRepository.findAllByDateRange(options.getFrom(), options.getTo())
+                .stream()
+                .filter(note -> note.getUser().equals(user))
+                .collect(Collectors.toSet());
+    }
+
+    private boolean match(Note note, FilterOptions filterOptions) {
+        boolean titleMatch = !StringUtils.hasText(filterOptions.getTitle())
+                || containsIgnoreCase(note.getTitle(), filterOptions.getTitle());
+
+        boolean tagMatch = !StringUtils.hasText(filterOptions.getTag())
+                || note.getTags().stream().anyMatch(tag -> containsIgnoreCase(tag.getLabel(), filterOptions.getTag()));
+
+        return titleMatch && tagMatch;
+    }
+
+    private boolean containsIgnoreCase(String source, String target) {
+        return source.toLowerCase().contains(target.toLowerCase());
     }
 }

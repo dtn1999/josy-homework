@@ -2,7 +2,7 @@ interface Props {
   error: string | null;
   success: string | null;
 }
-export function AlterBanner({ error, success }: Props) {
+export function AlertBanner({ error, success }: Props) {
   if (!error && !success) return null;
   if (error && success) return null;
   if (error && !success) {

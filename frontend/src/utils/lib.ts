@@ -1,4 +1,5 @@
 import { RegistrationFormValues } from "@/app/auth/register/form";
+import { FilterFormValues } from "@/app/dashboard/filter-form";
 import axios, { AxiosError } from "axios";
 
 const backendApi = axios.create({
@@ -147,6 +148,33 @@ export async function createNote(data: FormData) {
   } catch (error) {
     const errorResponse = mapToProblemDetail(error as AxiosError);
     console.error("Error occurred during note creation", errorResponse);
+    return {
+      message: errorResponse?.detail || "An error occurred",
+      success: false,
+    };
+  }
+}
+
+export async function searchNotes(
+  filterOptions: FilterFormValues
+): Promise<ApiResponse<Note[]>> {
+  const { token } = getAuthenticatedUser();
+  try {
+    const {
+      data: { data },
+    } = await backendApi.post("/notes/search", filterOptions, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("Search results", data);
+    return {
+      message: "Note created successfully",
+      success: true,
+      data,
+    };
+  } catch (error) {
+    const errorResponse = mapToProblemDetail(error as AxiosError);
     return {
       message: errorResponse?.detail || "An error occurred",
       success: false,

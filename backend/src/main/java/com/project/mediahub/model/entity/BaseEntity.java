@@ -10,6 +10,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.ZonedDateTime;
 
 @Getter
@@ -26,11 +27,11 @@ public class BaseEntity implements Serializable {
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
-    protected ZonedDateTime createdAt;
+    protected LocalDate createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at")
-    protected ZonedDateTime updatedAt;
+    protected LocalDate updatedAt;
 
     @Override
     @SuppressWarnings("com.haulmont.jpb.EqualsDoesntCheckParameterClass")

@@ -8,7 +8,7 @@ import { z } from "zod";
 import { TagInput } from "@/components/tag-input";
 import { createNote } from "@/utils/lib";
 import { useRouter } from "next/navigation";
-import { AlterBanner } from "@/components/alert-banner";
+import { AlertBanner } from "@/components/alert-banner";
 
 const MAX_FILE_SIZE = 1024 * 1024 * 5;
 
@@ -74,7 +74,7 @@ export function CreateNoticeForm() {
       className="h-fit min-w-[400px] space-y-6 py-5"
     >
       <h1 className="text-3xl text-left">Create New Notice</h1>
-      <AlterBanner error={error} success={null} />
+      <AlertBanner error={error} success={null} />
       <div className="flex flex-col">
         <label htmlFor="title">Title</label>
         <input

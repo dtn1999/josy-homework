@@ -3,21 +3,25 @@ import React from "react";
 
 export function useNotes() {
   const [notes, setNotes] = React.useState<Note[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(false);
+
   const fetchNotes = async () => {
+    setLoading(true);
     const response = await getAllNotes();
     if (response.success) {
-      setNotes(response.data);
+      setNotes(response?.data as Note[]);
     } else {
       console.error(response.message);
       setNotes([]);
     }
+    setLoading(false);
   };
 
   React.useEffect(() => {
     fetchNotes();
   }, []);
 
-  return notes;
+  return { notes, setNotes, loading };
 }
 
 export function useNoteById(id: string) {

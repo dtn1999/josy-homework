@@ -7,6 +7,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class FilterOptions {

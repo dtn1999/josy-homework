@@ -6,7 +6,7 @@ import { FieldValues, useForm } from "react-hook-form";
 import { z } from "zod";
 import { ApiResponse, registerUser } from "@/utils/lib";
 import { useRouter } from "next/navigation";
-import { AlterBanner } from "@/components/alert-banner";
+import { AlertBanner } from "@/components/alert-banner";
 
 const schema = z
   .object({
@@ -66,7 +66,7 @@ export function RegistrationForm() {
       )}
       className="border h-fit p-5 min-w-[400px] space-y-6"
     >
-      <AlterBanner error={error} success={success} />
+      <AlertBanner error={error} success={success} />
       <h1 className="text-3xl text-center">Create an account</h1>
       <div className="flex flex-col">
         <label htmlFor="firstname">First Name</label>

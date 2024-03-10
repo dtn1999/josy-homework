@@ -7,9 +7,10 @@ import { MdDeleteForever } from "react-icons/md";
 
 interface Props {
   notes: Note[];
+  loading: boolean;
 }
 
-export function NoteGrid({ notes }: Props) {
+export function NoteGrid({ notes, loading }: Props) {
   // just a dummy state to force remount of the component
   const [refresh, setRefresh] = React.useState<boolean>(false);
   const deleteNote = async (note: Note) => {
@@ -27,15 +28,19 @@ export function NoteGrid({ notes }: Props) {
   // a dummy useEffect to force remount of the component
   React.useEffect(() => {}, [refresh]);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="grid grid-cols-3 gap-5">
       {notes.length == 0 ? (
         <div className="text-center">No notes </div>
       ) : (
-        notes.map((note) => (
+        notes?.map((note) => (
           <div
             key={note.id}
-            className="px-5 py-1 shadow-md rounded border h-[335px]"
+            className="px-5 py-1 shadow-md rounded border h-[350px]"
           >
             <div>
               <h3 className="text-lg font-semibold py-1">{note.title}</h3>
