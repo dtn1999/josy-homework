@@ -55,11 +55,7 @@ export async function registerUser(
       success: true,
     };
   } catch (error) {
-    const errorResponse = mapToProblemDetail(error as AxiosError);
-    return {
-      message: errorResponse?.detail || "An error occurred",
-      success: false,
-    };
+    return handleError(error);
   }
 }
 
@@ -80,12 +76,7 @@ export async function login(
       success: true,
     };
   } catch (error) {
-    const errorResponse = mapToProblemDetail(error as AxiosError);
-    console.error("Error occurred during login", errorResponse);
-    return {
-      message: errorResponse?.detail || "An error occurred",
-      success: false,
-    };
+    return handleError(error);
   }
 }
 
@@ -99,11 +90,21 @@ export async function logout() {
     });
     removeToken();
   } catch (error) {
-    const errorResponse = mapToProblemDetail(error as AxiosError);
-    return {
-      message: errorResponse?.detail || "An error occurred",
-      success: false,
-    };
+    return handleError(error);
+  }
+}
+
+export async function deleteAccount() {
+  const { token } = getAuthenticatedUser();
+  try {
+    backendApi.delete("/auth/delete", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    removeToken();
+  } catch (error) {
+    return handleError(error);
   }
 }
 
@@ -123,11 +124,7 @@ export async function getMyProfile(): Promise<ApiResponse<UserDetails>> {
       data,
     };
   } catch (error) {
-    const errorResponse = mapToProblemDetail(error as AxiosError);
-    return {
-      message: errorResponse?.detail || "An error occurred",
-      success: false,
-    };
+    return handleError(error);
   }
 }
 
@@ -146,12 +143,7 @@ export async function createNote(data: FormData) {
       data: response.data,
     };
   } catch (error) {
-    const errorResponse = mapToProblemDetail(error as AxiosError);
-    console.error("Error occurred during note creation", errorResponse);
-    return {
-      message: errorResponse?.detail || "An error occurred",
-      success: false,
-    };
+    return handleError(error);
   }
 }
 
@@ -174,11 +166,7 @@ export async function searchNotes(
       data,
     };
   } catch (error) {
-    const errorResponse = mapToProblemDetail(error as AxiosError);
-    return {
-      message: errorResponse?.detail || "An error occurred",
-      success: false,
-    };
+    return handleError(error);
   }
 }
 
@@ -192,11 +180,7 @@ export async function getAllNotes(): Promise<ApiResponse<Note[]>> {
     });
     return response.data;
   } catch (error) {
-    const errorResponse = mapToProblemDetail(error as AxiosError);
-    return {
-      message: errorResponse?.detail || "An error occurred",
-      success: false,
-    };
+    return handleError(error);
   }
 }
 
@@ -210,11 +194,7 @@ export async function getNoteById(id: string) {
     });
     return response.data;
   } catch (error) {
-    const errorResponse = mapToProblemDetail(error as AxiosError);
-    return {
-      message: errorResponse?.detail || "An error occurred",
-      success: false,
-    };
+    return handleError(error);
   }
 }
 
@@ -228,11 +208,7 @@ export async function updateNoteById(id: string, data: FormData) {
     });
     return response.data;
   } catch (error) {
-    const errorResponse = mapToProblemDetail(error as AxiosError);
-    return {
-      message: errorResponse?.detail || "An error occurred",
-      success: false,
-    };
+    return handleError(error);
   }
 }
 
@@ -246,11 +222,7 @@ export async function deleteNoteById(id: string) {
     });
     return response.data;
   } catch (error) {
-    const errorResponse = mapToProblemDetail(error as AxiosError);
-    return {
-      message: errorResponse?.detail || "An error occurred",
-      success: false,
-    };
+    return handleError(error);
   }
 }
 
@@ -264,11 +236,7 @@ export async function getAllTags() {
     });
     return response.data;
   } catch (error) {
-    const errorResponse = mapToProblemDetail(error as AxiosError);
-    return {
-      message: errorResponse?.detail || "An error occurred",
-      success: false,
-    };
+    return handleError(error);
   }
 }
 
@@ -289,6 +257,10 @@ export function getAuthenticatedUser() {
   };
 }
 
-function mapToProblemDetail(error: AxiosError) {
-  return error.response?.data as ProblemDetail;
+function handleError(error: unknown) {
+  const errorResponse = (error as AxiosError).response?.data as ProblemDetail;
+  return {
+    message: errorResponse?.detail || "An error occurred",
+    success: false,
+  };
 }
