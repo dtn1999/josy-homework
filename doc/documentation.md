@@ -137,57 +137,43 @@ Die Klasse **SecurityController** fängt alle Anfragen ab, die darauf abzielen, 
 | forgotPassword | ForgotPasswordRequest: <br/> Diese Klasse enthält die E-Mail-Adresse des Benutzers, der sein Passwort ändern möchte, sowie das neue Passwort                                                  | Wenn keine Fehler auftreten, gibt diese Methode dem Benutzer einen Zugriffs-Token zurück, den er für alle nachfolgenden Anfragen zur Authentifizierung verwenden muss.                                             |
 
 ```java
-@Slf4j
 @RestController
 @RequestMapping("/api/auth")
-@RequiredArgsConstructor
 public class SecurityController {
     private final AuthenticationService authenticationService;
     private final TokenService tokenService;
 
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse> register(
-            @RequestBody @Valid RegistrationRequest request
-    ) {
-      ...
+    public ResponseEntity<ApiResponse> register(@RequestBody @Valid RegistrationRequest request) {
+        // .... (not showed)
         return ResponseEntity.ok(registrationResponse);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse> login(
-            @RequestBody @Valid LoginRequest request
-    ) {
-      ...
+    public ResponseEntity<ApiResponse> login(@RequestBody @Valid LoginRequest request) {
+      // .... (not showed)
         return ResponseEntity.ok(loginResponse);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<ApiResponse> logout(
-            final HttpServletRequest request
-    ) {
-      ...
+    public ResponseEntity<ApiResponse> logout(final HttpServletRequest request) {
+      // .... (not showed)
         return ResponseEntity.ok(logoutResponse);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse> me(
-            @AuthenticationPrincipal  UserDetails userDetails
-    ) {
-      ...
+    public ResponseEntity<ApiResponse> me(@AuthenticationPrincipal  UserDetails userDetails) {
+      // .... (not showed)
         return ResponseEntity
                 .ok(this.authenticationService.me(userDetails));
     }
 
-    @PutMapping
-    public ResponseEntity<ApiResponse> resetPassword(
-            @RequestBody @Valid ResetPasswordRequest request
-    ) {
-      ...
+    @PutMapping("/forgot-password")
+    public ResponseEntity<ApiResponse> resetPassword(@RequestBody @Valid ResetPasswordRequest request) {
+      // .... (not showed)
         return ResponseEntity.ok(resetPasswordResponse);
     }
-
 }
-
 ```
 
 

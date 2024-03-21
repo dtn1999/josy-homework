@@ -139,7 +139,7 @@ export function CreateNoticeForm() {
         className="px-3 py-2 rounded bg-green-500 text-white flex items-center space-x-1"
       >
         <FaSave />
-        <span className="">Create Notice</span>
+        <span className="">Create Note</span>
       </button>
     </form>
   );
