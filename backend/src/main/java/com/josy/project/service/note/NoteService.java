@@ -142,7 +142,7 @@ public class NoteService {
         if (!note.getUser().equals(user)) {
             return ApiResponse.failure("You are not authorized to delete this note");
         }
-        this.noteRepository.delete(note);
+        this.noteRepository.deleteById(noteId);
         return ApiResponse.success("Note deleted successfully", null);
     }
 

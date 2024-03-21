@@ -51,8 +51,8 @@ public class SecurityController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<ApiResponse> me(@AuthenticationPrincipal  UserDetails userDetails) {
-        if(Objects.isNull(userDetails)) {
+    public ResponseEntity<ApiResponse> me(@AuthenticationPrincipal UserDetails userDetails) {
+        if (Objects.isNull(userDetails)) {
             throw new AuthenticationServiceException("User not found");
         }
         return ResponseEntity
@@ -64,6 +64,13 @@ public class SecurityController {
         log.info("Resetting password for user with the following information: {}", request);
         ApiResponse resetPasswordResponse = authenticationService.resetPassword(request);
         return ResponseEntity.ok(resetPasswordResponse);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<ApiResponse> deleteAccount(@AuthenticationPrincipal UserDetails userDetails) {
+        log.info("Deleting account for user with the following information: {}", userDetails);
+        ApiResponse deleteAccountResponse = authenticationService.deleteAccount(userDetails);
+        return ResponseEntity.ok(deleteAccountResponse);
     }
 
 }

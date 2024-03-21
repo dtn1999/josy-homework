@@ -35,7 +35,7 @@ public class NoteController {
 
     @PostMapping("")
     public ResponseEntity<ApiResponse> create(
-            @RequestParam("image") MultipartFile image,
+            @RequestParam(name = "image", required = false) MultipartFile image,
             @RequestParam("payload") String payloadJson,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
@@ -70,7 +70,7 @@ public class NoteController {
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse> update(
             @PathVariable Long id,
-            @RequestParam("image") MultipartFile image,
+            @RequestParam(name = "image", required = false) MultipartFile image,
             @RequestParam("payload") CreateNotePayload payload,
             @AuthenticationPrincipal UserDetails userDetails) {
         log.info("Updating note with the following information: {}", payload);

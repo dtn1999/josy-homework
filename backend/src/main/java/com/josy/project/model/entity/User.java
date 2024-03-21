@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"notes"})
 @Entity
 @SuperBuilder
 @NoArgsConstructor

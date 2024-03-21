@@ -1,6 +1,5 @@
 package com.josy.project.config;
 
-import com.project.mediahub.repository.*;
 import com.josy.project.service.note.FilesStorageService;
 import com.josy.project.service.note.FilesStorageServiceImpl;
 import com.josy.project.service.security.JwtTokenFilter;
@@ -22,7 +21,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "com.project.mediahub.repository"
+        basePackages = "com.josy.project.*"
 )
 @Import(DummyDataProperties.class)
 public class ApplicationConfiguration implements WebMvcConfigurer {

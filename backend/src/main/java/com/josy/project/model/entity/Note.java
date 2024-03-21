@@ -28,6 +28,7 @@ public class Note extends BaseEntity {
     private Set<String> links = new HashSet<>();
 
     @ManyToOne
+    @ToString.Exclude
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -37,7 +38,6 @@ public class Note extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id")
     )
     @Builder.Default
-    @ToString.Exclude
     @ManyToMany(cascade = {CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private Set<Tag> tags = new HashSet<>();
 

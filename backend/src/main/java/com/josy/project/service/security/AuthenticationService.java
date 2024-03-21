@@ -2,7 +2,6 @@ package com.josy.project.service.security;
 
 import com.josy.project.model.payload.*;
 import com.josy.project.model.entity.User;
-import com.project.mediahub.model.payload.*;
 import com.josy.project.util.JwtTokenUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -73,7 +72,12 @@ public class AuthenticationService {
     }
 
     public ApiResponse me(UserDetails userDetails) {
-        User user = (User)this.userService.loadUserByUsername(userDetails.getUsername());
+        User user = (User) this.userService.loadUserByUsername(userDetails.getUsername());
         return ApiResponse.success(UserInfo.from(user));
+    }
+
+    public ApiResponse deleteAccount(UserDetails userDetails) {
+        this.userService.delete(userDetails);
+        return ApiResponse.success("Account deleted successfully", null);
     }
 }

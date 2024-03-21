@@ -55,5 +55,10 @@ public class UserService implements UserDetailsPasswordService, UserDetailsServi
         );
     }
 
+    public void delete(UserDetails userDetails) {
+        User user = this.profileRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        this.profileRepository.delete(user);
+    }
 }
 
