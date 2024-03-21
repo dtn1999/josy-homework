@@ -1,6 +1,6 @@
 "use client";
 
-import { NotImage } from "@/components/note-grid";
+import { NoteImage } from "@/components/note-grid";
 import { useNoteById } from "@/hooks/use-notes";
 
 export default function SingleNotePage({

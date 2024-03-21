@@ -52,7 +52,7 @@ export function NoteGrid({ notes, loading }: Props) {
             <p className="py-2">{note.content.slice(0, 35)}...</p>
             {/* if imageUrl is present, show the image */}
             <div>
-              <NotImage url={note.imageUrl} />
+              <NoteImage url={note.imageUrl} />
               <div className="py-1 self-end">
                 <div className="flex w-full justify-between py-2 text-white">
                   <Link
@@ -79,15 +79,17 @@ export function NoteGrid({ notes, loading }: Props) {
   );
 }
 
-export function NotImage({ url }: { url?: string }) {
+export function NoteImage({ url }: { url?: string }) {
   if (!url) {
-    <Image
-      src="/images/image-placeholder.jpeg"
-      alt="note image"
-      width={40}
-      height={40}
-      className="w-full h-40 object-cover rounded-md"
-    />;
+    return (
+      <Image
+        src="/images/image-placeholder.jpeg"
+        alt="note image"
+        width={40}
+        height={40}
+        className="w-full h-40 object-cover rounded-md"
+      />
+    );
   }
 
   return (

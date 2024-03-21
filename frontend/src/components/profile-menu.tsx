@@ -4,7 +4,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import { FaChevronDown } from "react-icons/fa";
 import { FaUserCog } from "react-icons/fa";
-import { logout } from "@/utils/lib";
+import { deleteAccount, logout } from "@/utils/lib";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/hooks/use-session";
 
@@ -56,6 +56,16 @@ export default function ProfileMenu() {
             <Menu.Item>
               {({ active }) => (
                 <button
+                  onClick={async () => {
+                    // await deleteAccount();
+                    const deletionConfirmed = confirm(
+                      "Are you sure you want to delete Your account?"
+                    );
+                    if (deletionConfirmed) {
+                      await deleteAccount();
+                      router.push("/auth/login");
+                    }
+                  }}
                   className={`${
                     active ? "bg-violet-500 text-white" : "text-gray-900"
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}

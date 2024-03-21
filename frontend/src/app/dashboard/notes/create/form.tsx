@@ -21,16 +21,19 @@ const ACCEPTED_IMAGE_MIME_TYPES = [
 
 const schema = z.object({
   title: z.string().min(5, "title required"),
-  content: z.string().min(1, "content required"),
+  content: z.string(),
   image: z
     .any()
+    .optional()
     .refine((files) => {
+      if (!files || files.length == 0) return true;
       return files?.[0]?.size <= MAX_FILE_SIZE;
     }, `Max image size is 5MB.`)
-    .refine(
-      (files) => ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type),
-      "Only .jpg, .jpeg, .png and .webp formats are supported."
-    ),
+    .refine((files) => {
+      if (!files || files.length == 0) return true;
+      return;
+      ACCEPTED_IMAGE_MIME_TYPES.includes(files?.[0]?.type);
+    }, "Only .jpg, .jpeg, .png and .webp formats are supported."),
 });
 
 export type CreateNoticeFormValues = z.infer<typeof schema>;
@@ -50,6 +53,7 @@ export function CreateNoticeForm() {
   const [image, setImage] = React.useState<File | null>(null);
   const [error, setError] = React.useState<string | null>("");
 
+  console.log("errors ", errors);
   const createNotice = async (data: CreateNoticeFormValues) => {
     setError(null);
     const formData = new FormData();
